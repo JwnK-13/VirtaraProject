@@ -1,0 +1,1217 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Virtara Project - Indonesian VTuber Agency</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&amp;family=Plus+Jakarta+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+  
+     <link rel="stylesheet" href="style.css" />
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'virtara': {
+              'deep-red': '#8B1538',
+              'bright-red': '#C41E3A',
+              'gold': '#D4AF37',
+              'light-gold': '#F4D03F',
+              'cream': '#FDF5E6',
+              'warm-brown': '#8B4513',
+              'dark': '#1A0F0F',
+              'surface': '#2D1F1F',
+              'accent': '#E8C547'
+            }
+          },
+          fontFamily: {
+            'display': ['Playfair Display', 'serif'],
+            'body': ['Plus Jakarta Sans', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+   
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full bg-virtara-dark text-virtara-cream font-body">
+    <!-- Loading Screen -->
+<div id="loadingScreen" class="loading-screen">
+  <div class="text-center">
+
+    <div class="logo-pulse mb-4">
+      <img src="img/virtara.jpg" 
+           alt="Virtara Logo"
+           class="w-24 h-24 mx-auto object-cover rounded-full">
+    </div>
+
+    <h2 class="text-2xl font-display text-virtara-gold">
+      Virtara Project
+    </h2>
+
+    <p class="text-sm text-virtara-cream/60 mt-2">
+      Loading Experience...
+    </p>
+
+  </div>
+</div>
+  <div class="app-wrapper animated-gradient batik-pattern"><!-- Floating Particles -->
+   <div id="particles" class="fixed inset-0 pointer-events-none overflow-hidden z-0"></div><!-- Navigation -->
+   <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 bg-virtara-dark/95 backdrop-blur-md border-b border-virtara-gold/20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+     <div class="flex items-center justify-between h-16 lg:h-20">
+<!-- Logo --> 
+<a href="#/" onclick="navigateTo('/')" class="flex items-center gap-3 cursor-pointer">
+  
+  <img src="img/virtara.jpg" 
+       alt="Virtara Logo"
+       class="w-12 h-12 object-cover rounded-full border-2 border-virtara-gold shadow-md hover:scale-110 transition">
+
+  <span id="navAgencyName" 
+        class="text-xl font-display font-bold bg-gradient-to-r from-virtara-gold to-virtara-light-gold bg-clip-text text-transparent">
+    Virtara Project
+  </span> 
+
+</a> <!-- Desktop Navigation -->
+      <div class="hidden lg:flex items-center gap-8"><a href="#/" onclick="navigateTo('/')" class="nav-link relative text-sm font-medium hover:text-virtara-gold transition-colors" data-route="/">Home</a> <a href="#/about" onclick="navigateTo('/about')" class="nav-link relative text-sm font-medium hover:text-virtara-gold transition-colors" data-route="/about">About</a>
+       <div class="relative group"><a href="#/generations" onclick="navigateTo('/generations')" class="nav-link relative text-sm font-medium hover:text-virtara-gold transition-colors flex items-center gap-1" data-route="/generations"> Generations <i data-lucide="chevron-down" class="w-4 h-4"></i> </a>
+        <div class="absolute top-full left-0 mt-2 w-48 bg-virtara-surface/95 backdrop-blur-md rounded-lg shadow-xl border border-virtara-gold/20 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300"><a href="#/generations/gen-1" onclick="navigateTo('/generations/gen-1')" class="block px-4 py-3 text-sm hover:bg-virtara-gold/10 hover:text-virtara-gold transition-colors">Generation 1</a> <a href="#/generations/gen-2a" onclick="navigateTo('/generations/gen-2a')" class="block px-4 py-3 text-sm hover:bg-virtara-gold/10 hover:text-virtara-gold transition-colors">Generation 2A</a> <a href="#/generations/gen-2b" onclick="navigateTo('/generations/gen-2b')" class="block px-4 py-3 text-sm hover:bg-virtara-gold/10 hover:text-virtara-gold transition-colors">Generation 2B</a>
+        </div>
+       </div><a href="#/schedule" onclick="navigateTo('/schedule')" class="nav-link relative text-sm font-medium hover:text-virtara-gold transition-colors" data-route="/schedule">Schedule</a> <a href="#/news" onclick="navigateTo('/news')" class="nav-link relative text-sm font-medium hover:text-virtara-gold transition-colors" data-route="/news">News</a> <a href="#/merch" onclick="navigateTo('/merch')" class="nav-link relative text-sm font-medium hover:text-virtara-gold transition-colors" data-route="/merch">Merch</a> <a href="#/contact" onclick="navigateTo('/contact')" class="nav-link relative text-sm font-medium hover:text-virtara-gold transition-colors" data-route="/contact">Contact</a>
+      </div><!-- Mobile Menu Button --> <button onclick="toggleMobileMenu()" class="lg:hidden p-2 text-virtara-gold"> <i data-lucide="menu" class="w-6 h-6" id="menuIcon"></i> </button>
+     </div>
+    </div>
+   </nav><!-- Mobile Menu -->
+   <div id="mobileMenu" class="mobile-menu fixed top-0 right-0 bottom-0 w-72 bg-virtara-surface/98 backdrop-blur-lg z-50 lg:hidden border-l border-virtara-gold/20">
+    <div class="p-6"><button onclick="toggleMobileMenu()" class="absolute top-4 right-4 p-2 text-virtara-gold"> <i data-lucide="x" class="w-6 h-6"></i> </button>
+     <div class="mt-12 space-y-4"><a href="#/" onclick="navigateTo('/'); toggleMobileMenu();" class="block py-3 text-lg font-medium hover:text-virtara-gold transition-colors border-b border-virtara-gold/10">Home</a> <a href="#/about" onclick="navigateTo('/about'); toggleMobileMenu();" class="block py-3 text-lg font-medium hover:text-virtara-gold transition-colors border-b border-virtara-gold/10">About</a> <a href="#/generations" onclick="navigateTo('/generations'); toggleMobileMenu();" class="block py-3 text-lg font-medium hover:text-virtara-gold transition-colors border-b border-virtara-gold/10">Generations</a>
+      <div class="pl-4 space-y-2"><a href="#/generations/gen-1" onclick="navigateTo('/generations/gen-1'); toggleMobileMenu();" class="block py-2 text-sm text-virtara-cream/70 hover:text-virtara-gold transition-colors">→ Generation 1</a> <a href="#/generations/gen-2a" onclick="navigateTo('/generations/gen-2a'); toggleMobileMenu();" class="block py-2 text-sm text-virtara-cream/70 hover:text-virtara-gold transition-colors">→ Generation 2A</a> <a href="#/generations/gen-2b" onclick="navigateTo('/generations/gen-2b'); toggleMobileMenu();" class="block py-2 text-sm text-virtara-cream/70 hover:text-virtara-gold transition-colors">→ Generation 2B</a>
+      </div><a href="#/schedule" onclick="navigateTo('/schedule'); toggleMobileMenu();" class="block py-3 text-lg font-medium hover:text-virtara-gold transition-colors border-b border-virtara-gold/10">Schedule</a> <a href="#/news" onclick="navigateTo('/news'); toggleMobileMenu();" class="block py-3 text-lg font-medium hover:text-virtara-gold transition-colors border-b border-virtara-gold/10">News</a> <a href="#/merch" onclick="navigateTo('/merch'); toggleMobileMenu();" class="block py-3 text-lg font-medium hover:text-virtara-gold transition-colors border-b border-virtara-gold/10">Merch</a> <a href="#/contact" onclick="navigateTo('/contact'); toggleMobileMenu();" class="block py-3 text-lg font-medium hover:text-virtara-gold transition-colors">Contact</a>
+     </div>
+    </div>
+   </div><!-- Main Content -->
+   <main id="mainContent" class="pt-16 lg:pt-20 min-h-screen"><!-- HOME PAGE -->
+    <div id="page-home" class="page active"><!-- Hero Section -->
+     <section class="relative min-h-[90vh] flex items-center justify-center overflow-hidden wayang-bg">
+      <div class="absolute inset-0 bg-gradient-to-b from-virtara-dark/50 via-transparent to-virtara-dark"></div><!-- Decorative Elements -->
+      <div class="absolute top-20 left-10 w-32 h-32 border border-virtara-gold/20 rounded-full animate-pulse"></div>
+      <div class="absolute bottom-32 right-20 w-24 h-24 border border-virtara-bright-red/20 rounded-full animate-pulse" style="animation-delay: 0.5s;"></div>
+      <div class="relative z-10 text-center px-4 max-w-5xl mx-auto"><!-- Ornamental Top -->
+       <div class="mb-8">
+        <svg width="200" height="40" viewbox="0 0 200 40" class="mx-auto opacity-60"><path d="M0 20 Q50 0 100 20 Q150 40 200 20" fill="none" stroke="#D4AF37" stroke-width="1" /> <circle cx="100" cy="20" r="5" fill="#D4AF37" /> <circle cx="60" cy="15" r="3" fill="#C41E3A" /> <circle cx="140" cy="15" r="3" fill="#C41E3A" />
+        </svg>
+       </div>
+       <h1 id="heroTitle" class="text-5xl md:text-7xl lg:text-8xl font-display font-bold mb-6"><span class="bg-gradient-to-r from-virtara-gold via-virtara-light-gold to-virtara-gold bg-clip-text text-transparent"> Virtara Project </span></h1>
+       <p id="heroTagline" class="text-xl md:text-2xl lg:text-3xl font-light text-virtara-cream/90 mb-4">Bringing Tradition into the Future of Virtual Entertainment</p>
+       <p class="text-lg text-virtara-cream/70 mb-12 max-w-2xl mx-auto">Where the timeless artistry of Indonesia meets the vibrant world of virtual entertainment</p>
+       <div class="flex flex-col sm:flex-row gap-4 justify-center"><button onclick="navigateTo('/generations')" class="px-8 py-4 bg-gradient-to-r from-virtara-bright-red to-virtara-deep-red rounded-lg font-semibold text-lg gold-glow hover:scale-105 transition-transform flex items-center justify-center gap-2"> <i data-lucide="users" class="w-5 h-5"></i> Meet Our Talents </button> <button onclick="navigateTo('/about')" class="px-8 py-4 border-2 border-virtara-gold/50 rounded-lg font-semibold text-lg hover:bg-virtara-gold/10 hover:border-virtara-gold transition-all flex items-center justify-center gap-2"> <i data-lucide="info" class="w-5 h-5"></i> About </button>
+       </div><!-- Scroll Indicator -->
+       <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce"><i data-lucide="chevron-down" class="w-8 h-8 text-virtara-gold/60"></i>
+       </div>
+      </div>
+     </section><!-- Featured Generations Preview -->
+     <section class="py-20 px-4">
+      <div class="max-w-7xl mx-auto">
+       <div class="text-center mb-16">
+        <div class="ornamental-divider max-w-md mx-auto mb-4"><span class="text-virtara-gold text-sm tracking-widest uppercase">Our Talents</span>
+        </div>
+        <h2 class="text-4xl md:text-5xl font-display font-bold mb-4"><span class="bg-gradient-to-r from-virtara-gold to-virtara-light-gold bg-clip-text text-transparent"> Explore Generations </span></h2>
+        <p class="text-virtara-cream/70 max-w-2xl mx-auto">Setiap Talent dalam generasi Virtara Project membawa keunikannya masing masing, Yuk lihat mereka masing masing!</p>
+       </div>
+       <div class="grid md:grid-cols-3 gap-8"><!-- Gen 1 Preview -->
+        <div onclick="navigateTo('/generations/gen-1')" class="gen-card cursor-pointer bg-gradient-to-br from-virtara-surface to-virtara-dark rounded-2xl p-8 border border-virtara-gold/20 gold-glow">
+         <div class="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-virtara-gold to-virtara-bright-red flex items-center justify-center"><span class="text-3xl font-display font-bold text-virtara-dark">1</span>
+         </div>
+         <h3 class="text-2xl font-display font-bold text-center mb-3 text-virtara-gold">Generation 1</h3>
+         <p class="text-center text-virtara-cream/70 mb-4">Gen Pertama Virtara Project</p>
+         <div class="text-center"><span class="text-sm text-virtara-gold/80">3 Talents</span>
+         </div>
+        </div><!-- Gen 2A Preview -->
+        <div onclick="navigateTo('/generations/gen-2a')" class="gen-card cursor-pointer bg-gradient-to-br from-virtara-surface to-virtara-dark rounded-2xl p-8 border border-virtara-bright-red/20 red-glow">
+         <div class="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-virtara-bright-red to-virtara-deep-red flex items-center justify-center"><span class="text-3xl font-display font-bold text-virtara-cream">2A</span>
+         </div>
+         <h3 class="text-2xl font-display font-bold text-center mb-3 text-virtara-bright-red">Generation 2A</h3>
+         <p class="text-center text-virtara-cream/70 mb-4">Gen Kedua Virtara Project</p>
+         <div class="text-center"><span class="text-sm text-virtara-bright-red/80">3 Talents</span>
+         </div>
+        </div><!-- Gen 2B Preview -->
+        <div onclick="navigateTo('/generations/gen-2b')" class="gen-card cursor-pointer bg-gradient-to-br from-virtara-surface to-virtara-dark rounded-2xl p-8 border border-virtara-accent/20">
+         <div class="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-virtara-accent to-virtara-gold flex items-center justify-center"><span class="text-3xl font-display font-bold text-virtara-dark">2B</span>
+         </div>
+         <h3 class="text-2xl font-display font-bold text-center mb-3 text-virtara-accent">Generation 2B</h3>
+         <p class="text-center text-virtara-cream/70 mb-4">Gen Terbaru Virtara Project</p>
+         <div class="text-center"><span class="text-sm text-virtara-accent/80">6 Talents</span>
+         </div>
+        </div>
+       </div>
+       <div class="text-center mt-12"><button onclick="navigateTo('/generations')" class="px-6 py-3 border border-virtara-gold/50 rounded-lg hover:bg-virtara-gold/10 transition-colors inline-flex items-center gap-2"> View All Generations <i data-lucide="arrow-right" class="w-4 h-4"></i> </button>
+       </div>
+      </div>
+     </section><!-- Latest News Preview -->
+     <section class="py-20 px-4 bg-virtara-surface/30">
+      <div class="max-w-7xl mx-auto">
+       <div class="flex items-center justify-between mb-12">
+        <div>
+         <div class="ornamental-divider max-w-xs mb-4"><span class="text-virtara-gold text-sm tracking-widest uppercase">Updates</span>
+         </div>
+         <h2 class="text-3xl md:text-4xl font-display font-bold text-virtara-gold">Latest News</h2>
+        </div><button onclick="navigateTo('/news')" class="hidden sm:flex items-center gap-2 text-virtara-gold hover:text-virtara-light-gold transition-colors"> View All <i data-lucide="arrow-right" class="w-4 h-4"></i> </button>
+       </div>
+       <div class="grid md:grid-cols-3 gap-6">
+        <div onclick="navigateTo('/news')" class="news-card cursor-pointer bg-virtara-surface rounded-xl overflow-hidden border border-virtara-gold/10">
+         <div class="h-48 bg-gradient-to-br from-virtara-bright-red/30 to-virtara-gold/20 flex items-center justify-center overflow-hidden"><i data-lucide="mic" class="w-16 h-16 text-virtara-gold/40 news-image"></i>
+         </div>
+         <div class="p-6"><span class="text-xs text-virtara-gold uppercase tracking-wider">Announcement</span>
+          <h3 class="text-lg font-semibold mt-2 mb-2">Official Merchandise VirtaraProject</h3>
+          <p class="text-sm text-virtara-cream/60">Pengunguman resmi merchandise VirtaraProject telah tersedia!</p><span class="text-xs text-virtara-cream/40 mt-4 block">Mar 12, 2026</span>
+         </div>
+        </div>
+        <div onclick="navigateTo('/news')" class="news-card cursor-pointer bg-virtara-surface rounded-xl overflow-hidden border border-virtara-gold/10">
+         <div class="h-48 bg-gradient-to-br from-virtara-gold/30 to-virtara-accent/20 flex items-center justify-center overflow-hidden"><i data-lucide="music" class="w-16 h-16 text-virtara-gold/40 news-image"></i>
+         </div>
+         <div class="p-6"><span class="text-xs text-virtara-gold uppercase tracking-wider">Announcement</span>
+          <h3 class="text-lg font-semibold mt-2 mb-2">Official Talent Generation 2B</h3>
+          <p class="text-sm text-virtara-cream/60">Pengunguman resmi Generation 2B telah tersedia!</p><span class="text-xs text-virtara-cream/40 mt-4 block">Feb 24, 2026</span>
+         </div>
+        </div>
+       </div>
+      </div>
+     </section>
+    </div><!-- ABOUT PAGE -->
+    <div id="page-about" class="page">
+     <section class="py-20 px-4 min-h-screen">
+      <div class="max-w-5xl mx-auto">
+       <div class="text-center mb-16">
+        <div class="ornamental-divider max-w-md mx-auto mb-4"><span class="text-virtara-gold text-sm tracking-widest uppercase">About Us</span>
+        </div>
+        <h1 id="aboutTitle" class="text-4xl md:text-6xl font-display font-bold mb-6 text-virtara-gold">Our Story</h1>
+       </div>
+       <div class="grid lg:grid-cols-2 gap-12 items-center mb-20">
+        <div class="space-y-6">
+         <p class="text-lg text-virtara-cream/90 leading-relaxed"><span class="text-2xl text-virtara-gold font-display">Virtara Project</span> adalah agensi VTuber Indonesia yang hadir sebagai ruang nyaman, aman, dan kreatif bagi para kreator virtual untuk berkembang bersama. Mengusung nuansa tradisional yang dipadukan dengan dunia virtual modern, Virtara ingin menciptakan identitas unik yang mengangkat nilai budaya sekaligus mengikuti perkembangan zaman.</p>
+         <p class="text-virtara-cream/70 leading-relaxed">Di Virtara, setiap individu bukan hanya sekadar talent, tapi juga bagian dari komunitas yang saling mendukung. Kami percaya bahwa setiap orang punya potensi dan ciri khasnya masing-masing, sehingga kami menyediakan wadah untuk belajar, berkolaborasi, dan mengekspresikan kreativitas tanpa batas.
+
+Melalui sistem angkatan dan berbagai showcase, Virtara mendorong setiap anggota untuk terus berkembang, baik dari segi skill, kepercayaan diri, maupun kemampuan bersosial. Selain itu, Virtara juga menjadi tempat bagi mereka yang baru mengenal dunia agensi VTuber untuk belajar dan memahami bagaimana industri ini berjalan.</p>
+         <p class="text-virtara-cream/70 leading-relaxed">Lebih dari sekadar agensi, Virtara adalah tempat untuk menemukan teman baru, membangun koneksi, dan tumbuh bersama dalam perjalanan di dunia virtual yang luas.
+
+Dengan menjunjung tinggi nilai toleransi dan budaya, Virtara Project berkomitmen untuk menjadi rumah bagi para VTuber Indonesia agar bisa bersinar dengan cara mereka sendiri.</p>
+        </div>
+<div class="relative">
+  <div class="w-full aspect-square rounded-2xl 
+              bg-gradient-to-br from-virtara-deep-red/30 via-virtara-surface to-virtara-gold/20 
+              border border-virtara-gold/20 flex items-center justify-center">
+
+    <img src="img/virtara.jpg" 
+         alt="About Image"
+         class="w-3/4 h-3/4 object-contain rounded-xl opacity-80">
+
+  </div>
+</div>
+       </div><!-- Vision & Mission -->
+       <div class="grid md:grid-cols-2 gap-8 mb-20">
+        <div class="bg-virtara-surface/50 rounded-2xl p-8 border border-virtara-gold/20">
+         <div class="w-16 h-16 rounded-full bg-gradient-to-br from-virtara-gold to-virtara-bright-red flex items-center justify-center mb-6"><i data-lucide="eye" class="w-8 h-8 text-virtara-dark"></i>
+         </div>
+         <h3 class="text-2xl font-display font-bold text-virtara-gold mb-4">Visi</h3>
+         <p class="text-virtara-cream/70 leading-relaxed">Menjadi ruang nyaman, aman dan kreatif bagi para vtuber untuk belajar, tumbuh, serta bersinar bersama dalam dunia virtual yang sangat luas. Menekankan nilai toleransi dan budaya.</p>
+        </div>
+<div class="bg-virtara-surface/50 rounded-2xl p-8 border border-virtara-bright-red/20">
+  
+  <div class="w-16 h-16 rounded-full bg-gradient-to-br from-virtara-bright-red to-virtara-deep-red flex items-center justify-center mb-6">
+    <i data-lucide="target" class="w-8 h-8 text-virtara-cream"></i>
+  </div>
+
+  <h3 class="text-2xl font-display font-bold text-virtara-bright-red mb-4">Misi</h3>
+
+  <ol class="list-decimal pl-5 space-y-2 text-virtara-cream/70 leading-relaxed">
+    <li>Membangun agensi vtuber yang ramah dan suportif.</li>
+    <li>Menyediakan wadah, kolaborasi, dan berbagi ilmu.</li>
+    <li>Mendorong anggota untuk mengembangkan identitas serta kreativitas masing-masing.</li>
+    <li>Mengangkat potensi setiap anggota melalui sistem angkatan dan showcase.</li>
+    <li>Meningkatkan skill dalam bersosial.</li>
+    <li>Mendapatkan teman/rekan sesama vtuber yang baru.</li>
+    <li>Mengenalkan dunia agensi kepada anggota yang belum pernah mengikuti agensi.</li>
+    <li>Meningkatkan semangat dalam dunia virtual.</li>
+  </ol>
+
+</div>
+       </div><!-- Core Values -->
+       <div class="text-center mb-12">
+        <h2 class="text-3xl font-display font-bold text-virtara-gold mb-8">Nilai inti kami</h2>
+       </div>
+       <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="text-center p-6">
+         <div class="w-14 h-14 mx-auto rounded-full bg-virtara-gold/20 flex items-center justify-center mb-4"><i data-lucide="heart" class="w-7 h-7 text-virtara-gold"></i>
+         </div>
+         <h4 class="font-semibold text-virtara-gold mb-2">Kerja Sama</h4>
+         <p class="text-sm text-virtara-cream/60">Saling membantu dalam hal apapun.</p>
+        </div>
+        <div class="text-center p-6">
+         <div class="w-14 h-14 mx-auto rounded-full bg-virtara-bright-red/20 flex items-center justify-center mb-4"><i data-lucide="sparkles" class="w-7 h-7 text-virtara-bright-red"></i>
+         </div>
+         <h4 class="font-semibold text-virtara-bright-red mb-2">Komunikasi</h4>
+         <p class="text-sm text-virtara-cream/60">Saling berkomunikasi supaya tidak hilang arah.</p>
+        </div>
+        <div class="text-center p-6">
+         <div class="w-14 h-14 mx-auto rounded-full bg-virtara-accent/20 flex items-center justify-center mb-4"><i data-lucide="users" class="w-7 h-7 text-virtara-accent"></i>
+         </div>
+         <h4 class="font-semibold text-virtara-accent mb-2">Komunitas</h4>
+         <p class="text-sm text-virtara-cream/60">Membangun komunitas yang berarti.</p>
+        </div>
+        <div class="text-center p-6">
+         <div class="w-14 h-14 mx-auto rounded-full bg-virtara-light-gold/20 flex items-center justify-center mb-4"><i data-lucide="star" class="w-7 h-7 text-virtara-light-gold"></i>
+         </div>
+         <h4 class="font-semibold text-virtara-light-gold mb-2">Excellence</h4>
+         <p class="text-sm text-virtara-cream/60">Berusaha mencapai kualitas tertinggi</p>
+        </div>
+       </div>
+      </div>
+     </section>
+    </div><!-- GENERATIONS HUB PAGE -->
+    <div id="page-generations" class="page">
+     <section class="py-20 px-4 min-h-screen">
+      <div class="max-w-6xl mx-auto">
+       <div class="text-center mb-16">
+        <div class="ornamental-divider max-w-md mx-auto mb-4"><span class="text-virtara-gold text-sm tracking-widest uppercase">Our Family</span>
+        </div>
+        <h1 class="text-4xl md:text-6xl font-display font-bold mb-6 text-virtara-gold">Generations</h1>
+        <p class="text-virtara-cream/70 max-w-2xl mx-auto">Temukan para talenta yang menghidupkan budaya Indonesia di dunia VTuber.</p>
+       </div>
+       <div class="space-y-8"><!-- Generation 1 Card -->
+        <div onclick="navigateTo('/generations/gen-1')" class="gen-card cursor-pointer bg-gradient-to-r from-virtara-surface via-virtara-surface/80 to-virtara-dark rounded-2xl p-8 md:p-12 border border-virtara-gold/30 gold-glow group">
+         <div class="flex flex-col md:flex-row items-center gap-8">
+          <div class="w-32 h-32 rounded-full bg-gradient-to-br from-virtara-gold to-virtara-bright-red flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform"><span class="text-5xl font-display font-bold text-virtara-dark">1</span>
+          </div>
+          <div class="flex-1 text-center md:text-left">
+           <h2 class="text-3xl md:text-4xl font-display font-bold text-virtara-gold mb-3">Generation 1: The Pioneers</h2>
+           <p class="text-lg text-virtara-cream/80 mb-4">First Gen • Est. 2026</p>
+           <p class="text-virtara-cream/60 mb-6">-</p>
+           <div class="flex flex-wrap justify-center md:justify-start gap-4"><span class="px-4 py-2 bg-virtara-gold/10 rounded-full text-sm text-virtara-gold border border-virtara-gold/30">3 Members</span> <span class="px-4 py-2 bg-virtara-gold/10 rounded-full text-sm text-virtara-gold border border-virtara-gold/30">Debut: 2026</span>
+           </div>
+          </div><i data-lucide="chevron-right" class="w-8 h-8 text-virtara-gold/50 group-hover:text-virtara-gold group-hover:translate-x-2 transition-all"></i>
+         </div>
+        </div><!-- Generation 2A Card -->
+        <div onclick="navigateTo('/generations/gen-2a')" class="gen-card cursor-pointer bg-gradient-to-r from-virtara-surface via-virtara-surface/80 to-virtara-dark rounded-2xl p-8 md:p-12 border border-virtara-bright-red/30 red-glow group">
+         <div class="flex flex-col md:flex-row items-center gap-8">
+          <div class="w-32 h-32 rounded-full bg-gradient-to-br from-virtara-bright-red to-virtara-deep-red flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform"><span class="text-5xl font-display font-bold text-virtara-cream">2A</span>
+          </div>
+          <div class="flex-1 text-center md:text-left">
+           <h2 class="text-3xl md:text-4xl font-display font-bold text-virtara-bright-red mb-3">Generation 2A: The Guardians</h2>
+           <p class="text-lg text-virtara-cream/80 mb-4">Second Gen • Est. 2026</p>
+           <p class="text-virtara-cream/60 mb-6">-</p>
+           <div class="flex flex-wrap justify-center md:justify-start gap-4"><span class="px-4 py-2 bg-virtara-bright-red/10 rounded-full text-sm text-virtara-bright-red border border-virtara-bright-red/30">3 Members</span> <span class="px-4 py-2 bg-virtara-bright-red/10 rounded-full text-sm text-virtara-bright-red border border-virtara-bright-red/30">Debut: TBA</span>
+           </div>
+          </div><i data-lucide="chevron-right" class="w-8 h-8 text-virtara-bright-red/50 group-hover:text-virtara-bright-red group-hover:translate-x-2 transition-all"></i>
+         </div>
+        </div><!-- Generation 2B Card -->
+        <div onclick="navigateTo('/generations/gen-2b')" class="gen-card cursor-pointer bg-gradient-to-r from-virtara-surface via-virtara-surface/80 to-virtara-dark rounded-2xl p-8 md:p-12 border border-virtara-accent/30 group">
+         <div class="flex flex-col md:flex-row items-center gap-8">
+          <div class="w-32 h-32 rounded-full bg-gradient-to-br from-virtara-accent to-virtara-gold flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform"><span class="text-5xl font-display font-bold text-virtara-dark">2B</span>
+          </div>
+          <div class="flex-1 text-center md:text-left">
+           <h2 class="text-3xl md:text-4xl font-display font-bold text-virtara-accent mb-3">Generation 2B: The Visionaries</h2>
+           <p class="text-lg text-virtara-cream/80 mb-4">Newest • Est. 2026</p>
+           <p class="text-virtara-cream/60 mb-6">-</p>
+           <div class="flex flex-wrap justify-center md:justify-start gap-4"><span class="px-4 py-2 bg-virtara-accent/10 rounded-full text-sm text-virtara-accent border border-virtara-accent/30">3 Members</span> <span class="px-4 py-2 bg-virtara-accent/10 rounded-full text-sm text-virtara-accent border border-virtara-accent/30">Debut: TBA</span>
+           </div>
+          </div><i data-lucide="chevron-right" class="w-8 h-8 text-virtara-accent/50 group-hover:text-virtara-accent group-hover:translate-x-2 transition-all"></i>
+         </div>
+        </div>
+       </div>
+      </div>
+     </section>
+    </div><!-- GENERATION 1 PAGE -->
+    <div id="page-gen-1" class="page">
+     <section class="py-20 px-4 min-h-screen">
+      <div class="max-w-6xl mx-auto"><button onclick="navigateTo('/generations')" class="flex items-center gap-2 text-virtara-gold hover:text-virtara-light-gold transition-colors mb-8"> <i data-lucide="arrow-left" class="w-5 h-5"></i> Back to Generations </button>
+       <div class="text-center mb-16">
+        <div class="w-24 h-24 mx-auto rounded-full bg-gradient-to-br from-virtara-gold to-virtara-bright-red flex items-center justify-center mb-6"><span class="text-4xl font-display font-bold text-virtara-dark">1</span>
+        </div>
+        <h1 class="text-4xl md:text-6xl font-display font-bold mb-4 text-virtara-gold">Generation 1</h1>
+        <p class="text-2xl text-virtara-cream/80 mb-2">The Pioneers</p>
+        <p class="text-virtara-cream/60">Spirits of VirtaraProject • Debuted March 2026</p>
+       </div>
+       <div class="grid md:grid-cols-3 gap-8" id="gen1-talents"><!-- Talent cards will be rendered here -->
+       </div>
+      </div>
+     </section>
+    </div><!-- GENERATION 2A PAGE -->
+    <div id="page-gen-2a" class="page">
+     <section class="py-20 px-4 min-h-screen">
+      <div class="max-w-6xl mx-auto"><button onclick="navigateTo('/generations')" class="flex items-center gap-2 text-virtara-bright-red hover:text-virtara-cream transition-colors mb-8"> <i data-lucide="arrow-left" class="w-5 h-5"></i> Back to Generations </button>
+       <div class="text-center mb-16">
+        <div class="w-24 h-24 mx-auto rounded-full bg-gradient-to-br from-virtara-bright-red to-virtara-deep-red flex items-center justify-center mb-6"><span class="text-4xl font-display font-bold text-virtara-cream">2A</span>
+        </div>
+        <h1 class="text-4xl md:text-6xl font-display font-bold mb-4 text-virtara-bright-red">Generation 2A</h1>
+        <p class="text-2xl text-virtara-cream/80 mb-2">The Guardians</p>
+        <p class="text-virtara-cream/60">Echoes of VirtaraProject • Debut TBA</p>
+       </div>
+       <div class="grid md:grid-cols-3 gap-8" id="gen2a-talents"><!-- Talent cards will be rendered here -->
+       </div>
+      </div>
+     </section>
+    </div><!-- GENERATION 2B PAGE -->
+    <div id="page-gen-2b" class="page">
+     <section class="py-20 px-4 min-h-screen">
+      <div class="max-w-6xl mx-auto"><button onclick="navigateTo('/generations')" class="flex items-center gap-2 text-virtara-accent hover:text-virtara-light-gold transition-colors mb-8"> <i data-lucide="arrow-left" class="w-5 h-5"></i> Back to Generations </button>
+       <div class="text-center mb-16">
+        <div class="w-24 h-24 mx-auto rounded-full bg-gradient-to-br from-virtara-accent to-virtara-gold flex items-center justify-center mb-6"><span class="text-4xl font-display font-bold text-virtara-dark">2B</span>
+        </div>
+        <h1 class="text-4xl md:text-6xl font-display font-bold mb-4 text-virtara-accent">Generation 2B</h1>
+        <p class="text-2xl text-virtara-cream/80 mb-2">The Visionaries</p>
+        <p class="text-virtara-cream/60">Dreams of VirtaraProject • Debut TBA</p>
+       </div>
+       <div class="grid md:grid-cols-3 gap-8" id="gen2b-talents"><!-- Talent cards will be rendered here -->
+       </div>
+      </div>
+     </section>
+    </div><!-- TALENT DETAIL PAGE -->
+    <div id="page-talent" class="page">
+     <section class="py-20 px-4 min-h-screen">
+      <div id="talent-detail-content" class="max-w-5xl mx-auto"><!-- Dynamic content rendered here -->
+      </div>
+     </section>
+    </div><!-- SCHEDULE PAGE -->
+    <div id="page-schedule" class="page">
+     <section class="py-20 px-4 min-h-screen">
+      <div class="max-w-5xl mx-auto">
+       <div class="text-center mb-16">
+        <div class="ornamental-divider max-w-md mx-auto mb-4"><span class="text-virtara-gold text-sm tracking-widest uppercase">Streams &amp; Events</span>
+        </div>
+        <h1 class="text-4xl md:text-6xl font-display font-bold mb-6 text-virtara-gold">Schedule</h1>
+        <p class="text-virtara-cream/70">Catch your favorite talents live!</p>
+       </div><!-- Week Navigation -->
+       <div class="flex justify-center gap-4 mb-12"><button class="px-6 py-3 bg-virtara-gold text-virtara-dark rounded-lg font-semibold">This Week</button> <button class="px-6 py-3 border border-virtara-gold/30 rounded-lg hover:bg-virtara-gold/10 transition-colors">Next Week</button>
+       </div><!-- Schedule Grid -->
+       <div class="grid gap-4"><!-- Monday -->
+        <div class="bg-virtara-surface/50 rounded-xl p-6 border border-virtara-gold/10">
+         <h3 class="text-xl font-semibold text-virtara-gold mb-4 flex items-center gap-2"><i data-lucide="calendar" class="w-5 h-5"></i> Maret 2026</h3>
+         <div class="space-y-4">
+          <div class="schedule-item flex items-center justify-between bg-virtara-dark/50 rounded-lg p-4">
+           <div>
+            <p class="font-semibold">TBA</p> <!-- Member -->
+            <p class="text-sm text-virtara-cream/60">TBA</p> <!-- Judul -->
+           </div><span class="text-virtara-gold">TBA</span> <!-- Jam -->
+          </div>
+            </div>
+        </div><!-- Thursday -->
+        <!-- <div class="bg-virtara-surface/50 rounded-xl p-6 border border-virtara-gold/10">
+         <h3 class="text-xl font-semibold text-virtara-gold mb-4 flex items-center gap-2"><i data-lucide="calendar" class="w-5 h-5"></i> Thursday, December 19</h3>
+         <div class="space-y-4">
+          <div class="schedule-item flex items-center justify-between bg-virtara-dark/50 rounded-lg p-4">
+           <div>
+            <p class="font-semibold">Bintang Langit - Music Cover</p>
+            <p class="text-sm text-virtara-cream/60">New Cover Release</p>
+           </div><span class="text-virtara-gold">19:00 WIB</span>
+          </div>
+         </div>
+        </div><!-- Friday -->
+        <!-- <div class="bg-virtara-surface/50 rounded-xl p-6 border border-virtara-gold/10">
+         <h3 class="text-xl font-semibold text-virtara-gold mb-4 flex items-center gap-2"><i data-lucide="calendar" class="w-5 h-5"></i> Friday, December 20</h3>
+         <div class="space-y-4">
+          <div class="schedule-item flex items-center justify-between bg-virtara-dark/50 rounded-lg p-4">
+           <div>
+            <p class="font-semibold text-virtara-accent">✨ Generation 2B Official Debut ✨</p>
+            <p class="text-sm text-virtara-cream/60">The Visionaries Arrive!</p>
+           </div><span class="text-virtara-accent font-bold">19:00 WIB</span>
+          </div>
+         </div>
+        </div> -->
+       </div>
+      </div>
+     </section> -->
+    </div><!-- NEWS PAGE -->
+    <div id="page-news" class="page">
+     <section class="py-20 px-4 min-h-screen">
+      <div class="max-w-6xl mx-auto">
+       <div class="text-center mb-16">
+        <div class="ornamental-divider max-w-md mx-auto mb-4"><span class="text-virtara-gold text-sm tracking-widest uppercase">Updates</span>
+        </div>
+        <h1 class="text-4xl md:text-6xl font-display font-bold mb-6 text-virtara-gold">News &amp; Announcements</h1>
+       </div>
+       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"><!-- News Item 1 -->
+        <article class="news-card bg-virtara-surface rounded-xl overflow-hidden border border-virtara-gold/10">
+         <div class="h-48 bg-gradient-to-br from-virtara-accent/40 to-virtara-gold/20 flex items-center justify-center overflow-hidden"><i data-lucide="sparkles" class="w-20 h-20 text-virtara-gold/40 news-image"></i>
+         </div>
+         <div class="p-6"><span class="text-xs text-virtara-accent uppercase tracking-wider font-semibold">Merch</span>
+          <h3 class="text-xl font-semibold mt-2 mb-3">Official Merchandise Launch</h3>
+          <p class="text-sm text-virtara-cream/60 mb-4">Virtara Project Official merchandise kini Tersedia!  Dengan harga terjangkau kalian sudah bisa membeli merchandise talent favoritmu!</p>
+          <div class="flex items-center justify-between"><span class="text-xs text-virtara-cream/40">Maret 12, 2026</span> <button class="text-virtara-gold hover:text-virtara-light-gold text-sm font-medium">Read More →</button>
+          </div>
+         </div>
+        </article><!-- News Item 2 -->
+        <article class="news-card bg-virtara-surface rounded-xl overflow-hidden border border-virtara-gold/10">
+         <div class="h-48 bg-gradient-to-br from-virtara-gold/40 to-virtara-bright-red/20 flex items-center justify-center overflow-hidden"><i data-lucide="music" class="w-20 h-20 text-virtara-gold/40 news-image"></i>
+         </div>
+         <div class="p-6"><span class="text-xs text-virtara-gold uppercase tracking-wider font-semibold">Announcement</span>
+          <h3 class="text-xl font-semibold mt-2 mb-3">Official Talent Generation 2B</h3>
+          <p class="text-sm text-virtara-cream/60 mb-4">Generasi 2B Virtara Project telah hadir! Saksikan keunikan setiap talent baru! Pantau terus yaa.</p>
+          <div class="flex items-center justify-between"><span class="text-xs text-virtara-cream/40">Februari 24, 2026</span> <button class="text-virtara-gold hover:text-virtara-light-gold text-sm font-medium">Read More →</button>
+          </div>
+         </div>
+    
+        </article><!-- News Item 6 -->
+       </div>
+      </div>
+     </section>
+    </div><!-- MERCHANDISE PAGE -->
+    <div id="page-merch" class="page">
+     <section class="py-20 px-4 min-h-screen">
+      <div class="max-w-6xl mx-auto">
+       <div class="text-center mb-16">
+        <div class="ornamental-divider max-w-md mx-auto mb-4"><span class="text-virtara-gold text-sm tracking-widest uppercase">Official Store</span>
+        </div>
+        <h1 class="text-4xl md:text-6xl font-display font-bold mb-6 text-virtara-gold">Merchandise</h1>
+        <p class="text-virtara-cream/70">Show your support with exclusive Virtara Project merchandise</p>
+       </div><!-- Filter Tabs -->
+       <div class="flex flex-wrap justify-center gap-3 mb-12"><button class="px-5 py-2 bg-virtara-gold text-virtara-dark rounded-full font-medium text-sm">All Items</button>
+       </div>
+       <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Product 1 -->
+<a href="https://shopee.co.id/wof44ppqld?categoryId=100639&entryPoint=ShopByPDP&itemId=57407117830" class="block">
+  <div class="product-card bg-virtara-surface rounded-xl overflow-hidden border border-virtara-gold/10 hover:scale-[1.02] transition cursor-pointer">
+    <div class="aspect-square bg-gradient-to-br from-virtara-gold/20 to-virtara-bright-red/10 flex items-center justify-center">
+      <div class="w-full h-full relative">
+        
+        <img src="img/merch.webp" alt="Merch"
+          class="w-full h-full object-cover"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+
+        <div class="absolute inset-0 flex items-center justify-center" style="display: none;">
+          <i data-lucide="shirt" class="w-16 h-16 text-virtara-gold/60"></i>
+        </div>
+      </div>
+    </div>
+    <div class="p-4">
+      <span class="text-xs text-virtara-gold uppercase">Merch</span>
+      <h3 class="font-semibold mt-1 mb-2">Gantungan Kunci All Member</h3>
+      <p class="text-sm text-virtara-cream/60 mb-3">Limited Edition</p>
+      <div class="flex items-center justify-between">
+        <span class="text-lg font-bold text-virtara-gold">IDR 30,000</span>
+        <!-- Tombol cart -->
+        <button 
+          onclick="event.stopPropagation(); window.location.href='https://shopee.co.id/-PO-Merchandise-Freebies-Virtalent-Gen-1-Style-CNNM--i.1771750852.56507114021?extraParams=%7B%22display_model_id%22%3A420635298784%2C%22model_selection_logic%22%3A2%7D';"
+          class="p-2 bg-virtara-gold/20 rounded-lg hover:bg-virtara-gold/30 transition-colors">
+          <i data-lucide="shopping-cart" class="w-5 h-5 text-virtara-gold"></i>
+        </button>
+      </div>
+    </div>
+
+  </div>
+</a><!-- Product 2 -->
+
+       </div>
+       <p class="text-center text-sm text-virtara-cream/50 mt-12">* Sample merchandise display. Actual products may vary.</p>
+      </div>
+     </section>
+    </div><!-- CONTACT PAGE -->
+    <div id="page-contact" class="page">
+     <section class="py-20 px-4 min-h-screen">
+      <div class="max-w-4xl mx-auto">
+       <div class="text-center mb-16">
+        <div class="ornamental-divider max-w-md mx-auto mb-4"><span class="text-virtara-gold text-sm tracking-widest uppercase">Get in Touch</span>
+        </div>
+        <h1 class="text-4xl md:text-6xl font-display font-bold mb-6 text-virtara-gold">Contact Us</h1>
+        <p class="text-virtara-cream/70">We'd love to hear from you</p>
+       </div>
+       <div class="grid lg:grid-cols-2 gap-12"><!-- Contact Form -->
+        <div class="bg-virtara-surface/50 rounded-2xl p-8 border border-virtara-gold/20">
+         <h2 class="text-2xl font-display font-bold text-virtara-gold mb-6">Send a Message</h2>
+         <form id="contactForm" onsubmit="handleContactSubmit(event)" class="space-y-5">
+          <div><label class="block text-sm font-medium mb-2 text-virtara-cream/80">Name</label> <input type="text" required class="form-input w-full px-4 py-3 bg-virtara-dark/50 border border-virtara-gold/20 rounded-lg text-virtara-cream placeholder-virtara-cream/40 transition-all" placeholder="Your name">
+          </div>
+          <div><label class="block text-sm font-medium mb-2 text-virtara-cream/80">Email</label> <input type="email" required class="form-input w-full px-4 py-3 bg-virtara-dark/50 border border-virtara-gold/20 rounded-lg text-virtara-cream placeholder-virtara-cream/40 transition-all" placeholder="your@email.com">
+          </div>
+          <div><label class="block text-sm font-medium mb-2 text-virtara-cream/80">Subject</label> <select required class="form-input w-full px-4 py-3 bg-virtara-dark/50 border border-virtara-gold/20 rounded-lg text-virtara-cream transition-all"> <option value="">Select a subject</option> <option value="general">General Inquiry</option> <option value="business">Business Proposal</option> <option value="audition">Talent Audition</option> <option value="support">Fan Support</option> <option value="press">Press &amp; Media</option> </select>
+          </div>
+          <div><label class="block text-sm font-medium mb-2 text-virtara-cream/80">Message</label> <textarea required rows="5" class="form-input w-full px-4 py-3 bg-virtara-dark/50 border border-virtara-gold/20 rounded-lg text-virtara-cream placeholder-virtara-cream/40 transition-all resize-none" placeholder="Your message..."></textarea>
+          </div><button type="submit" class="w-full py-4 bg-gradient-to-r from-virtara-bright-red to-virtara-deep-red rounded-lg font-semibold hover:scale-[1.02] transition-transform gold-glow"> Send Message </button>
+         </form>
+         <div id="contactSuccess" class="hidden mt-6 p-4 bg-green-500/20 border border-green-500/30 rounded-lg text-green-400 text-center"><i data-lucide="check-circle" class="w-6 h-6 mx-auto mb-2"></i> Message sent successfully! We'll get back to you soon.
+         </div>
+        </div><!-- Contact Info -->
+        <div class="space-y-8">
+         <div class="bg-virtara-surface/50 rounded-2xl p-8 border border-virtara-gold/20">
+          <h2 class="text-2xl font-display font-bold text-virtara-gold mb-6">Contact Information</h2>
+          <div class="space-y-6">
+           <div class="flex items-start gap-4">
+            <div class="w-12 h-12 rounded-full bg-virtara-gold/10 flex items-center justify-center shrink-0"><i data-lucide="mail" class="w-5 h-5 text-virtara-gold"></i>
+            </div>
+            <div>
+             <p class="font-medium">Email</p>
+             <p class="text-virtara-cream/70">a@a.com</p>
+            </div>
+           </div>
+           <div class="flex items-start gap-4">
+            <div class="w-12 h-12 rounded-full bg-virtara-gold/10 flex items-center justify-center shrink-0"><i data-lucide="building" class="w-5 h-5 text-virtara-gold"></i>
+            </div>
+            <div>
+             <p class="font-medium">Business Inquiries</p>
+             <p class="text-virtara-cream/70">a@a.com</p>
+            </div>
+           </div>
+           <div class="flex items-start gap-4">
+            <div class="w-12 h-12 rounded-full bg-virtara-gold/10 flex items-center justify-center shrink-0"><i data-lucide="map-pin" class="w-5 h-5 text-virtara-gold"></i>
+            </div>
+            <div>
+             <p class="font-medium">Location</p>
+             <p class="text-virtara-cream/70">Indonesia</p>
+            </div>
+           </div>
+          </div>
+         </div><!-- Social Links -->
+         <div class="bg-virtara-surface/50 rounded-2xl p-8 border border-virtara-gold/20">
+          <h3 class="text-xl font-display font-bold text-virtara-gold mb-6">Follow Us</h3>
+          <div class="flex gap-4"><a href="#" class="w-12 h-12 rounded-full bg-virtara-gold/10 flex items-center justify-center hover:bg-virtara-gold/20 transition-colors"> <i data-lucide="twitter" class="w-5 h-5 text-virtara-gold"></i> </a> <a href="#" class="w-12 h-12 rounded-full bg-virtara-gold/10 flex items-center justify-center hover:bg-virtara-gold/20 transition-colors"> <i data-lucide="youtube" class="w-5 h-5 text-virtara-gold"></i> </a> <a href="#" class="w-12 h-12 rounded-full bg-virtara-gold/10 flex items-center justify-center hover:bg-virtara-gold/20 transition-colors"> <i data-lucide="instagram" class="w-5 h-5 text-virtara-gold"></i> </a> <a href="#" class="w-12 h-12 rounded-full bg-virtara-gold/10 flex items-center justify-center hover:bg-virtara-gold/20 transition-colors"> <i data-lucide="twitch" class="w-5 h-5 text-virtara-gold"></i> </a>
+          </div>
+         </div>
+        </div>
+       </div>
+      </div>
+     </section>
+    </div>
+   </main><!-- Footer -->
+   <footer class="bg-virtara-dark/80 border-t border-virtara-gold/20 py-12 px-4">
+    <div class="max-w-7xl mx-auto">
+     <div class="grid md:grid-cols-4 gap-8 mb-12"><!-- Brand -->
+      <div class="md:col-span-2">
+       <div class="flex items-center gap-3 mb-4">
+        <svg width="40" height="40" viewbox="0 0 120 120"><defs>
+          <lineargradient id="footerLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+           <stop offset="0%" style="stop-color:#D4AF37" />
+           <stop offset="100%" style="stop-color:#C41E3A" />
+          </lineargradient>
+         </defs> <path d="M60 15 L75 40 L68 47 L75 65 L60 90 L45 65 L52 47 L45 40 Z" fill="url(#footerLogoGrad)" /> <circle cx="60" cy="33" r="6" fill="#FDF5E6" />
+        </svg><span id="footerAgencyName" class="text-xl font-display font-bold text-virtara-gold">Virtara Project</span>
+       </div>
+       <p class="text-virtara-cream/60 max-w-md">Bringing the timeless beauty of Indonesian culture to the world through virtual entertainment. Where tradition meets innovation.</p>
+      </div><!-- Quick Links -->
+      <div>
+       <h4 class="font-semibold text-virtara-gold mb-4">Quick Links</h4>
+       <ul class="space-y-2 text-sm">
+        <li><a href="#/about" onclick="navigateTo('/about')" class="text-virtara-cream/60 hover:text-virtara-gold transition-colors">About Us</a></li>
+        <li><a href="#/generations" onclick="navigateTo('/generations')" class="text-virtara-cream/60 hover:text-virtara-gold transition-colors">Generations</a></li>
+        <li><a href="#/schedule" onclick="navigateTo('/schedule')" class="text-virtara-cream/60 hover:text-virtara-gold transition-colors">Schedule</a></li>
+        <li><a href="#/news" onclick="navigateTo('/news')" class="text-virtara-cream/60 hover:text-virtara-gold transition-colors">News</a></li>
+       </ul>
+      </div><!-- Support -->
+      <div>
+       <h4 class="font-semibold text-virtara-gold mb-4">Support</h4>
+       <ul class="space-y-2 text-sm">
+        <li><a href="#/contact" onclick="navigateTo('/contact')" class="text-virtara-cream/60 hover:text-virtara-gold transition-colors">Contact</a></li>
+        <li><a href="#/merch" onclick="navigateTo('/merch')" class="text-virtara-cream/60 hover:text-virtara-gold transition-colors">Merchandise</a></li>
+        <li><a href="https://virtaraproject.blogspot.com/2025/09/kode-etik-komunitas-gard-virtual-id.html" class="text-virtara-cream/60 hover:text-virtara-gold transition-colors">Fan Guidelines</a></li>
+        <li><a href="https://virtaraproject.blogspot.com/2026/02/peraturan-ketentuan.html" class="text-virtara-cream/60 hover:text-virtara-gold transition-colors">Privacy Policy</a></li>
+       </ul>
+      </div>
+     </div><!-- Ornamental Divider -->
+     <div class="ornamental-divider mb-8"><span class="px-4">
+       <svg width="40" height="20" viewbox="0 0 40 20" class="opacity-50"><path d="M0 10 Q10 0 20 10 Q30 20 40 10" fill="none" stroke="#D4AF37" stroke-width="1" />
+       </svg></span>
+     </div>
+     <div class="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-virtara-cream/50">
+      <p>© 2026 Virtara Project. All rights reserved.</p>
+     </div>
+    </div>
+   </footer>
+  </div>
+  <script>
+    // ==========================================
+    // TALENT DATA - Editable individual images
+    // ==========================================
+    const talents = {
+      // Generation 1 - Spirits of Java
+      'RanoMalvino': {
+        id: 'RanoMalvino',
+        name: 'Rano Malvino',
+        generation: 'Generation 1',
+        genId: 'gen-1',
+        tagline: '',
+        signatureColor: '#aa61bc',
+        imagePath: 'img/Rano.jpeg', // Individual image path - can be updated
+        imageIcon: 'music',
+        personality: '-',
+        lore: '-',
+        socials: { youtube: '#', twitter: '#', twitch: '#' }
+      },
+      'AikaSetsuko': {
+        id: 'AikaSetsuko',
+        name: 'Aika Setsuko',
+        generation: 'Generation 1',
+        genId: 'gen-1',
+        tagline: '',
+        signatureColor: '#efefef',
+        imagePath: 'img/Aika.jpeg', // Individual image path - can be updated
+        imageIcon: 'mic',
+        personality: '-',
+        lore: '-',
+        socials: { youtube: '#', twitter: '#', twitch: '#' }
+      },
+      'MayaZahraAthela': {
+        id: 'MayaZahraAthela',
+        name: 'Maya Zahra Athela',
+        generation: 'Generation 1',
+        genId: 'gen-1',
+        tagline: '',
+        signatureColor: '#1e91c5',
+        imagePath: 'img/Maya.jpeg', // Individual image path - can be updated
+        imageIcon: 'palette',
+        personality: '-',
+        lore: '-',
+        socials: { youtube: '#', twitter: '#', instagram: '#' }
+      },
+
+      // Generation 2A - Echoes of Sumatra
+      'MonthymonAwawa': {
+        id: 'MonthymonAwawa',
+        name: 'Monthymon Awawa',
+        generation: 'Generation 2A',
+        genId: 'gen-2a',
+        tagline: '',
+        signatureColor: '#f775fa',
+        imagePath: null,
+        imageIcon: 'zap',
+        personality: '-',
+        lore: '-',
+        socials: { youtube: '#', twitter: '#', twitch: '#' }
+      },
+      'TalithaHikari': {
+        id: 'TalithaHikari',
+        name: 'Talitha Hikari',
+        generation: 'Generation 2A',
+        genId: 'gen-2a',
+        tagline: '',
+        signatureColor: '#e4fcfa',
+        imagePath: null,
+        imageIcon: 'star',
+        personality: '-',
+        lore: '-',
+        socials: { youtube: '#', twitter: '#', instagram: '#' }
+      },
+      'AdindaChelia': {
+        id: 'AdindaChelia',
+        name: 'Adinda Chelia',
+        generation: 'Generation 2A',
+        genId: 'gen-2a',
+        tagline: '',
+        signatureColor: '#0e897f',
+        imagePath: null,
+        imageIcon: 'crown',
+        personality: '-',
+        lore: '-',
+        socials: { youtube: '#', twitter: '#', twitch: '#' }
+      },
+
+      // Generation 2B - Dreams of Bali
+      'NipaLavendraAsteria': {
+        id: 'NipaLavendraAsteria',
+        name: 'Nipa Lavendra Asteria',
+        generation: 'Generation 2B',
+        genId: 'gen-2b',
+        tagline: '',
+        signatureColor: '#d059d0',
+        imagePath: null,
+        imageIcon: 'sun',
+        personality: '-',
+        lore: '-',
+        socials: { youtube: '#', twitter: '#', instagram: '#' }
+      },
+      'RyuugaRen': {
+        id: 'RyuugaRen',
+        name: 'Ryuuga Ren',
+        generation: 'Generation 2B',
+        genId: 'gen-2b',
+        tagline: '',
+        signatureColor: '#ac4309',
+        imagePath: 'img/ryuuga.jpeg', // Individual image path - can be updated
+        imageIcon: 'moon',
+        personality: '-',
+        lore: '-',
+        socials: { youtube: '#', twitter: '#', twitch: '#' }
+      },
+      'ChrisElvar': {
+        id: 'ChrisElvar',
+        name: 'Chris Elvar',
+        generation: 'Generation 2B',
+        genId: 'gen-2b',
+        tagline: '',
+        signatureColor: '#9e9e9e',
+        imagePath: 'img/chrisel.jpeg', // Individual image path - can be updated
+        imageIcon: 'coffee',
+        personality: '-',
+        lore: '-',
+        socials: { youtube: '#', twitter: '#', instagram: '#' }
+      },
+      'LumiAvelline': {
+        id: 'LumiAvelline',
+        name: 'Lumi Avelline',
+        generation: 'Generation 2B',
+        genId: 'gen-2b',
+        tagline: '',
+        signatureColor: '#c19ac7',
+        imagePath: null,
+        imageIcon: 'wind',
+        personality: '-',
+        lore: '-',
+        socials: { youtube: '#', twitter: '#', instagram: '#' }
+      },
+      'OdeliaChandana': {
+        id: 'OdeliaChandana',
+        name: 'Odelia Chandana',
+        generation: 'Generation 2B',
+        genId: 'gen-2b',
+        tagline: '',
+        signatureColor: '#cf32e9',
+        imagePath: null,
+        imageIcon: 'leaf',
+        personality: '-',
+        lore: '-',
+        socials: { youtube: '#', twitter: '#', instagram: '#' }
+      },
+      'TheodoreElzein': {
+        id: 'TheodoreElzein',
+        name: 'Theodore Elzein',
+        generation: 'Generation 2B',
+        genId: 'gen-2b',
+        tagline: '',
+        signatureColor: '#0e20a3',
+        imagePath: null,
+        imageIcon: 'mic',
+        personality: '-',
+        lore: '-',
+        socials: { youtube: '#', twitter: '#', instagram: '#' }
+      }
+    };
+
+    // Group talents by generation
+    const generations = {
+      'gen-1': {
+        name: 'Generation 1',
+        subtitle: 'The Pioneers',
+        theme: 'Spirits of Java',
+        color: '#D4AF37',
+        talents: ['RanoMalvino', 'AikaSetsuko', 'MayaZahraAthela']
+      },
+      'gen-2a': {
+        name: 'Generation 2A',
+        subtitle: 'The Guardians',
+        theme: 'Echoes of Sumatra',
+        color: '#C41E3A',
+        talents: ['MonthymonAwawa', 'TalithaHikari', 'AdindaChelia']
+      },
+      'gen-2b': {
+        name: 'Generation 2B',
+        subtitle: 'The Visionaries',
+        theme: 'Dreams of Bali',
+        color: '#E8C547',
+        talents: ['NipaLavendraAsteria', 'RyuugaRen', 'ChrisElvar', 'LumiAvelline', 'OdeliaChandana', 'TheodoreElzein']
+      }
+    };
+
+    // ==========================================
+    // DEFAULT CONFIG
+    // ==========================================
+    const defaultConfig = {
+      agency_name: 'Virtara Project',
+      hero_tagline: 'Bringing Tradition into the Future of Virtual Entertainment',
+      about_title: 'Our Story',
+      contact_email: 'contact@virtaraproject.com',
+      background_color: '#1A0F0F',
+      surface_color: '#2D1F1F',
+      text_color: '#FDF5E6',
+      primary_color: '#D4AF37',
+      secondary_color: '#C41E3A',
+      font_family: 'Plus Jakarta Sans',
+      font_size: 16
+    };
+
+    let config = { ...defaultConfig };
+
+    // ==========================================
+    // ROUTING
+    // ==========================================
+    let currentRoute = '/';
+
+    function navigateTo(route) {
+      event?.preventDefault();
+      
+      const currentPage = document.querySelector('.page.active');
+      if (currentPage) {
+        currentPage.classList.add('fade-out');
+      }
+
+      setTimeout(() => {
+        // Hide all pages
+        document.querySelectorAll('.page').forEach(p => {
+          p.classList.remove('active', 'fade-out');
+        });
+
+        // Determine which page to show
+        let pageId = 'page-home';
+        
+        if (route === '/') {
+          pageId = 'page-home';
+        } else if (route === '/about') {
+          pageId = 'page-about';
+        } else if (route === '/generations') {
+          pageId = 'page-generations';
+        } else if (route === '/generations/gen-1') {
+          pageId = 'page-gen-1';
+          renderGenerationTalents('gen-1');
+        } else if (route === '/generations/gen-2a') {
+          pageId = 'page-gen-2a';
+          renderGenerationTalents('gen-2a');
+        } else if (route === '/generations/gen-2b') {
+          pageId = 'page-gen-2b';
+          renderGenerationTalents('gen-2b');
+        } else if (route.startsWith('/talent/')) {
+          const talentId = route.replace('/talent/', '');
+          pageId = 'page-talent';
+          renderTalentDetail(talentId);
+        } else if (route === '/schedule') {
+          pageId = 'page-schedule';
+        } else if (route === '/news') {
+          pageId = 'page-news';
+        } else if (route === '/merch') {
+          pageId = 'page-merch';
+        } else if (route === '/contact') {
+          pageId = 'page-contact';
+        }
+
+        // Show target page
+        const targetPage = document.getElementById(pageId);
+        if (targetPage) {
+          targetPage.classList.add('active');
+        }
+
+        // Update URL hash
+        window.location.hash = route;
+        currentRoute = route;
+
+        // Update nav active states
+        updateNavActiveStates(route);
+
+        // Scroll to top
+        document.querySelector('.app-wrapper').scrollTop = 0;
+
+        // Re-initialize Lucide icons
+        lucide.createIcons();
+      }, 250);
+    }
+
+    function updateNavActiveStates(route) {
+      document.querySelectorAll('.nav-link').forEach(link => {
+        const linkRoute = link.getAttribute('data-route');
+        if (linkRoute === route || (route.startsWith('/generations') && linkRoute === '/generations')) {
+          link.classList.add('active');
+        } else {
+          link.classList.remove('active');
+        }
+      });
+    }
+
+    // ==========================================
+    // RENDER FUNCTIONS
+    // ==========================================
+    function createTalentCard(talent, genColor) {
+      const card = document.createElement('div');
+      card.className = 'talent-card relative bg-virtara-surface rounded-2xl overflow-hidden border border-opacity-30 cursor-pointer';
+      card.style.borderColor = talent.signatureColor;
+      card.onclick = () => navigateTo(`/talent/${talent.id}`);
+
+      card.innerHTML = `
+        <div class="talent-glow"></div>
+        <div class="aspect-[3/4] bg-gradient-to-br from-virtara-surface to-virtara-dark flex items-center justify-center relative overflow-hidden">
+          <div class="absolute inset-0 opacity-10" style="background: linear-gradient(135deg, ${talent.signatureColor}40, transparent);"></div>
+          ${talent.imagePath 
+            ? `<img src="${talent.imagePath}" alt="${talent.name}" loading="lazy" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+               <div class="absolute inset-0 flex items-center justify-center" style="display: none;">
+                 <i data-lucide="${talent.imageIcon}" class="w-24 h-24" style="color: ${talent.signatureColor}50;"></i>
+               </div>`
+            : `<i data-lucide="${talent.imageIcon}" class="w-24 h-24" style="color: ${talent.signatureColor}50;"></i>`
+          }
+        </div>
+        <div class="p-6">
+          <div class="w-8 h-1 rounded-full mb-3" style="background: ${talent.signatureColor};"></div>
+          <h3 class="text-xl font-display font-bold mb-1" style="color: ${talent.signatureColor};">${talent.name}</h3>
+          <p class="text-sm text-virtara-cream/60">${talent.tagline}</p>
+        </div>
+      `;
+
+      return card;
+    }
+
+    function renderGenerationTalents(genId) {
+      const gen = generations[genId];
+      const containerId = genId === 'gen-1' ? 'gen1-talents' : genId === 'gen-2a' ? 'gen2a-talents' : 'gen2b-talents';
+      const container = document.getElementById(containerId);
+      
+      if (!container) return;
+      
+      container.innerHTML = '';
+      
+      gen.talents.forEach(talentId => {
+        const talent = talents[talentId];
+        if (talent) {
+          container.appendChild(createTalentCard(talent, gen.color));
+        }
+      });
+
+      lucide.createIcons();
+    }
+
+    function renderTalentDetail(talentId) {
+      const talent = talents[talentId];
+      const container = document.getElementById('talent-detail-content');
+      
+      if (!talent || !container) return;
+
+      container.innerHTML = `
+        <button onclick="navigateTo('/generations/${talent.genId}')" class="flex items-center gap-2 hover:opacity-80 transition-opacity mb-8" style="color: ${talent.signatureColor};">
+          <i data-lucide="arrow-left" class="w-5 h-5"></i>
+          Back to ${talent.generation}
+        </button>
+
+        <div class="grid lg:grid-cols-2 gap-12 items-start">
+          <!-- Character Image -->
+          <div class="relative">
+            <div class="aspect-[3/4] rounded-2xl overflow-hidden border-2" style="border-color: ${talent.signatureColor}30; box-shadow: 0 0 40px ${talent.signatureColor}20;">
+              <div class="w-full h-full bg-gradient-to-br from-virtara-surface to-virtara-dark flex items-center justify-center relative">
+                <div class="absolute inset-0 opacity-20" style="background: linear-gradient(135deg, ${talent.signatureColor}, transparent);"></div>
+                ${talent.imagePath 
+                  ? `<img src="${talent.imagePath}" alt="${talent.name}" loading="lazy" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                     <div class="absolute inset-0 flex items-center justify-center" style="display: none;">
+                       <i data-lucide="${talent.imageIcon}" class="w-40 h-40" style="color: ${talent.signatureColor}40;"></i>
+                     </div>`
+                  : `<i data-lucide="${talent.imageIcon}" class="w-40 h-40" style="color: ${talent.signatureColor}40;"></i>`
+                }
+              </div>
+            </div>
+            <!-- Signature Color Badge -->
+            <div class="absolute -bottom-4 left-1/2 transform -translate-x-1/2 px-6 py-2 rounded-full text-sm font-medium" style="background: ${talent.signatureColor}; color: #1A0F0F;">
+              Signature Color
+            </div>
+          </div>
+
+          <!-- Info -->
+          <div class="space-y-8">
+            <div>
+              <p class="text-sm uppercase tracking-wider mb-2" style="color: ${talent.signatureColor};">${talent.generation}</p>
+              <h1 class="text-4xl md:text-5xl font-display font-bold mb-2" style="color: ${talent.signatureColor};">${talent.name}</h1>
+              <p class="text-xl text-virtara-cream/80">${talent.tagline}</p>
+            </div>
+
+            <div class="w-full h-px" style="background: linear-gradient(90deg, transparent, ${talent.signatureColor}, transparent);"></div>
+
+            <div>
+              <h2 class="text-xl font-display font-semibold mb-4" style="color: ${talent.signatureColor};">Personality</h2>
+              <p class="text-virtara-cream/80 leading-relaxed">${talent.personality}</p>
+            </div>
+
+            <div>
+              <h2 class="text-xl font-display font-semibold mb-4" style="color: ${talent.signatureColor};">Lore & Background</h2>
+              <p class="text-virtara-cream/70 leading-relaxed">${talent.lore}</p>
+            </div>
+
+            <div>
+              <h2 class="text-xl font-display font-semibold mb-4" style="color: ${talent.signatureColor};">Connect</h2>
+              <div class="flex gap-3">
+                ${talent.socials.youtube ? `<a href="${talent.socials.youtube}" target="_blank" rel="noopener noreferrer" class="w-12 h-12 rounded-full flex items-center justify-center transition-colors hover:scale-110" style="background: ${talent.signatureColor}20; color: ${talent.signatureColor};"><i data-lucide="youtube" class="w-5 h-5"></i></a>` : ''}
+                ${talent.socials.twitter ? `<a href="${talent.socials.twitter}" target="_blank" rel="noopener noreferrer" class="w-12 h-12 rounded-full flex items-center justify-center transition-colors hover:scale-110" style="background: ${talent.signatureColor}20; color: ${talent.signatureColor};"><i data-lucide="twitter" class="w-5 h-5"></i></a>` : ''}
+                ${talent.socials.twitch ? `<a href="${talent.socials.twitch}" target="_blank" rel="noopener noreferrer" class="w-12 h-12 rounded-full flex items-center justify-center transition-colors hover:scale-110" style="background: ${talent.signatureColor}20; color: ${talent.signatureColor};"><i data-lucide="twitch" class="w-5 h-5"></i></a>` : ''}
+                ${talent.socials.instagram ? `<a href="${talent.socials.instagram}" target="_blank" rel="noopener noreferrer" class="w-12 h-12 rounded-full flex items-center justify-center transition-colors hover:scale-110" style="background: ${talent.signatureColor}20; color: ${talent.signatureColor};"><i data-lucide="instagram" class="w-5 h-5"></i></a>` : ''}
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      lucide.createIcons();
+    }
+
+    // ==========================================
+    // UI HANDLERS
+    // ==========================================
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobileMenu');
+      menu.classList.toggle('open');
+    }
+
+    function handleContactSubmit(e) {
+      e.preventDefault();
+      const form = document.getElementById('contactForm');
+      const success = document.getElementById('contactSuccess');
+      
+      // Simulate form submission
+      form.style.opacity = '0.5';
+      form.style.pointerEvents = 'none';
+      
+      setTimeout(() => {
+        success.classList.remove('hidden');
+        form.reset();
+        form.style.opacity = '1';
+        form.style.pointerEvents = 'auto';
+        lucide.createIcons();
+        
+        setTimeout(() => {
+          success.classList.add('hidden');
+        }, 5000);
+      }, 1000);
+    }
+
+    // ==========================================
+    // PARTICLES
+    // ==========================================
+    function createParticles() {
+      const container = document.getElementById('particles');
+      if (!container) return;
+      
+      for (let i = 0; i < 30; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.top = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 8 + 's';
+        particle.style.width = (Math.random() * 4 + 2) + 'px';
+        particle.style.height = particle.style.width;
+        container.appendChild(particle);
+      }
+    }
+
+    // ==========================================
+    // ELEMENT SDK
+    // ==========================================
+    async function onConfigChange(cfg) {
+      // Update agency name
+      const navName = document.getElementById('navAgencyName');
+      const footerName = document.getElementById('footerAgencyName');
+      const heroTitle = document.getElementById('heroTitle');
+      if (navName) navName.textContent = cfg.agency_name || defaultConfig.agency_name;
+      if (footerName) footerName.textContent = cfg.agency_name || defaultConfig.agency_name;
+      if (heroTitle) heroTitle.innerHTML = `<span class="bg-gradient-to-r from-virtara-gold via-virtara-light-gold to-virtara-gold bg-clip-text text-transparent">${cfg.agency_name || defaultConfig.agency_name}</span>`;
+
+      // Update hero tagline
+      const heroTagline = document.getElementById('heroTagline');
+      if (heroTagline) heroTagline.textContent = cfg.hero_tagline || defaultConfig.hero_tagline;
+
+      // Update about title
+      const aboutTitle = document.getElementById('aboutTitle');
+      if (aboutTitle) aboutTitle.textContent = cfg.about_title || defaultConfig.about_title;
+
+      // Update contact email
+      const displayEmail = document.getElementById('displayEmail');
+      if (displayEmail) displayEmail.textContent = cfg.contact_email || defaultConfig.contact_email;
+
+      // Apply font
+      const fontFamily = cfg.font_family || defaultConfig.font_family;
+      document.body.style.fontFamily = `${fontFamily}, 'Plus Jakarta Sans', sans-serif`;
+
+      // Apply font size scaling
+      const baseSize = cfg.font_size || defaultConfig.font_size;
+      document.documentElement.style.fontSize = `${baseSize}px`;
+    }
+
+    function mapToCapabilities(cfg) {
+      return {
+        recolorables: [
+          {
+            get: () => cfg.background_color || defaultConfig.background_color,
+            set: (v) => { cfg.background_color = v; window.elementSdk?.setConfig({ background_color: v }); }
+          },
+          {
+            get: () => cfg.surface_color || defaultConfig.surface_color,
+            set: (v) => { cfg.surface_color = v; window.elementSdk?.setConfig({ surface_color: v }); }
+          },
+          {
+            get: () => cfg.text_color || defaultConfig.text_color,
+            set: (v) => { cfg.text_color = v; window.elementSdk?.setConfig({ text_color: v }); }
+          },
+          {
+            get: () => cfg.primary_color || defaultConfig.primary_color,
+            set: (v) => { cfg.primary_color = v; window.elementSdk?.setConfig({ primary_color: v }); }
+          },
+          {
+            get: () => cfg.secondary_color || defaultConfig.secondary_color,
+            set: (v) => { cfg.secondary_color = v; window.elementSdk?.setConfig({ secondary_color: v }); }
+          }
+        ],
+        borderables: [],
+        fontEditable: {
+          get: () => cfg.font_family || defaultConfig.font_family,
+          set: (v) => { cfg.font_family = v; window.elementSdk?.setConfig({ font_family: v }); }
+        },
+        fontSizeable: {
+          get: () => cfg.font_size || defaultConfig.font_size,
+          set: (v) => { cfg.font_size = v; window.elementSdk?.setConfig({ font_size: v }); }
+        }
+      };
+    }
+
+    function mapToEditPanelValues(cfg) {
+      return new Map([
+        ['agency_name', cfg.agency_name || defaultConfig.agency_name],
+        ['hero_tagline', cfg.hero_tagline || defaultConfig.hero_tagline],
+        ['about_title', cfg.about_title || defaultConfig.about_title],
+        ['contact_email', cfg.contact_email || defaultConfig.contact_email]
+      ]);
+    }
+
+    // ==========================================
+    // INITIALIZATION
+    // ==========================================
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities,
+        mapToEditPanelValues
+      });
+      config = window.elementSdk.config || defaultConfig;
+    }
+
+    // Initialize Lucide icons
+    lucide.createIcons();
+
+    // Create floating particles
+    createParticles();
+
+    // Handle initial route from hash
+    const initialHash = window.location.hash.replace('#', '') || '/';
+    
+    // Hide loading screen after a short delay
+    setTimeout(() => {
+      const loadingScreen = document.getElementById('loadingScreen');
+      if (loadingScreen) {
+        loadingScreen.classList.add('hidden');
+      }
+      
+      // Navigate to initial route
+      if (initialHash !== '/') {
+        navigateTo(initialHash);
+      } else {
+        document.getElementById('page-home')?.classList.add('active');
+        updateNavActiveStates('/');
+      }
+    }, 1500);
+
+    // Handle browser back/forward
+    window.addEventListener('hashchange', () => {
+      const route = window.location.hash.replace('#', '') || '/';
+      if (route !== currentRoute) {
+        navigateTo(route);
+      }
+    });
+
+    // Apply initial config
+    onConfigChange(config);
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9de18cf11701a5b9',t:'MTc3MzgwODczNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
