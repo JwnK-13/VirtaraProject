@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="id" class="h-full">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tebak Siluet - Virtara Arcade</title>
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="arcade.css">
+<script>
+  tailwind.config = { theme: { extend: {
+    colors: { 'virtara': { 'deep-red':'#8B1538','bright-red':'#C41E3A','gold':'#D4AF37','light-gold':'#F4D03F','cream':'#FDF5E6','warm-brown':'#8B4513','dark':'#1A0F0F','surface':'#2D1F1F','accent':'#E8C547' } },
+    fontFamily: { 'display': ['Playfair Display','serif'], 'body': ['Plus Jakarta Sans','sans-serif'] }
+  } } }
+</script>
+<style>.no-scrollbar::-webkit-scrollbar{display:none}</style>
+</head>
+<body class="h-full bg-virtara-dark text-virtara-cream font-body min-h-screen animated-gradient batik-pattern">
+
+<div id="arcadeNav"></div>
+
+<main class="max-w-lg mx-auto px-4 py-12 text-center">
+  <h1 class="font-display text-3xl md:text-4xl font-bold merdeka-gradient-text mb-2">👤 Tebak Siluet</h1>
+  <p class="text-virtara-cream/70 mb-6">Tebak karakter VTuber dari siluetnya. Jaga streak-mu untuk bonus skor!</p>
+
+  <div class="flex justify-center gap-4 mb-6 text-sm">
+    <div class="arcade-stat px-4 py-2">⭐ <span id="scoreDisplay">0</span> Skor</div>
+    <div class="arcade-stat px-4 py-2">🔥 <span id="streakDisplay">0</span> Streak</div>
+  </div>
+
+  <div class="arcade-card p-6 mb-6">
+    <div class="w-48 h-48 mx-auto mb-2 flex items-center justify-center">
+      <img id="silhouetteImage" class="max-w-full max-h-full object-contain" style="filter: brightness(0);">
+    </div>
+  </div>
+
+  <div id="silhouetteOptions" class="grid grid-cols-2 gap-3 mb-4"></div>
+  <p id="feedbackText" class="text-sm h-5"></p>
+</main>
+
+<script src="js/arcade-core.js"></script>
+<script src="js/arcade-shell.js"></script>
+<script>
+  // Only PNG (transparent-background) art makes a clean silhouette.
+  function silhouettePool() {
+    const seen = new Set();
+    const list = [];
+    ArcadeCore.CARD_DB.forEach(c => {
+      if (c.image && c.image.toLowerCase().endsWith('.png') && !seen.has(c.image)) {
+        seen.add(c.image);
+        list.push({ id: c.id, name: c.name, image: c.image });
+      }
+    });
+    return list;
+  }
+
+  let pool = [];
+  let target = null;
+  let score = 0;
+  let streak = 0;
+  let bestStreak = 0;
+  let firstPlay = true;
+
+  function newRound() {
+    pool = silhouettePool();
+    target = pool[Math.floor(Math.random() * pool.length)];
+    document.getElementById('silhouetteImage').src = target.image;
+    document.getElementById('feedbackText').textContent = '';
+    renderOptions();
+  }
+
+  function renderOptions() {
+    const distractors = pool.filter(c => c.id !== target.id).sort(() => Math.random() - 0.5).slice(0, 3);
+    const options = [target, ...distractors].sort(() => Math.random() - 0.5);
+    const holder = document.getElementById('silhouetteOptions');
+    holder.innerHTML = options.map(c => `
+      <button data-id="${c.id}" class="sil-btn px-4 py-3 rounded-lg border border-virtara-gold/25 hover:border-virtara-gold hover:bg-virtara-gold/10 transition-colors text-sm">
+        ${c.name}
+      </button>`).join('');
+    holder.querySelectorAll('.sil-btn').forEach(btn => btn.addEventListener('click', () => guess(btn.dataset.id)));
+  }
+
+  function guess(cardId) {
+    if (firstPlay) { ArcadeCore.markGamePlayed('tebak-siluet'); firstPlay = false; }
+    const feedback = document.getElementById('feedbackText');
+    if (cardId === target.id) {
+      streak += 1;
+      bestStreak = Math.max(bestStreak, streak);
+      const bonus = Math.floor(streak / 3);
+      const gained = 1 + bonus;
+      score += gained;
+      feedback.textContent = `Benar! +${gained} poin${bonus > 0 ? ' (termasuk bonus streak)' : ''}`;
+      feedback.className = 'text-sm h-5 text-green-400';
+      ArcadeCore.addXp(gained * 2);
+      ArcadeCore.addCoin(gained);
+    } else {
+      streak = 0;
+      feedback.textContent = `Salah! Jawabannya ${target.name}.`;
+      feedback.className = 'text-sm h-5 text-virtara-bright-red';
+    }
+    document.getElementById('scoreDisplay').textContent = score;
+    document.getElementById('streakDisplay').textContent = streak;
+
+    const p = ArcadeCore.getPlayer();
+    ArcadeCore.ArcadeDB.submitScore('tebak-siluet', { uuid: p.uuid, username: p.username, score, bestStreak });
+    ArcadeShell.renderNav('tebak-siluet.html');
+
+    setTimeout(newRound, 900);
+  }
+
+  ArcadeShell.init({
+    activePath: 'tebak-siluet.html',
+    onReady: () => { newRound(); lucide.createIcons(); }
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="id" class="h-full">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profil - Virtara Arcade</title>
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="arcade.css">
+<script>
+  tailwind.config = { theme: { extend: {
+    colors: { 'virtara': { 'deep-red':'#8B1538','bright-red':'#C41E3A','gold':'#D4AF37','light-gold':'#F4D03F','cream':'#FDF5E6','warm-brown':'#8B4513','dark':'#1A0F0F','surface':'#2D1F1F','accent':'#E8C547' } },
+    fontFamily: { 'display': ['Playfair Display','serif'], 'body': ['Plus Jakarta Sans','sans-serif'] }
+  } } }
+</script>
+<style>.no-scrollbar::-webkit-scrollbar{display:none}</style>
+</head>
+<body class="h-full bg-virtara-dark text-virtara-cream font-body min-h-screen animated-gradient batik-pattern">
+
+<div id="arcadeNav"></div>
+
+<main class="max-w-3xl mx-auto px-4 py-10">
+
+  <div class="arcade-card p-6 mb-8 flex flex-col md:flex-row md:items-center gap-6">
+    <div class="w-20 h-20 rounded-full bg-gradient-to-br from-virtara-bright-red to-virtara-gold flex items-center justify-center font-display text-3xl font-bold shrink-0" id="avatarInitial"></div>
+    <div class="flex-1">
+      <div class="flex flex-col sm:flex-row gap-2 sm:items-center">
+        <input id="usernameInput" class="px-3 py-2 rounded-lg bg-virtara-surface border border-virtara-gold/30 font-display font-bold text-lg w-full sm:w-56" maxlength="24">
+        <button id="saveUsernameBtn" class="px-4 py-2 rounded-lg bg-virtara-gold/15 hover:bg-virtara-gold/25 text-sm transition-colors">Simpan</button>
+      </div>
+      <p id="joinDateText" class="text-xs text-virtara-cream/40 mt-2"></p>
+      <div class="xp-bar-track w-full max-w-xs mt-3"><div id="profileXpBar" class="xp-bar-fill"></div></div>
+      <p id="levelText" class="text-xs text-virtara-cream/50 mt-1"></p>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-10">
+    <div class="arcade-stat p-4 text-center"><p id="statCoin" class="text-xl font-bold text-virtara-gold"></p><p class="text-[11px] text-virtara-cream/50">Coin</p></div>
+    <div class="arcade-stat p-4 text-center"><p id="statXp" class="text-xl font-bold text-virtara-gold"></p><p class="text-[11px] text-virtara-cream/50">Total XP</p></div>
+    <div class="arcade-stat p-4 text-center"><p id="statGames" class="text-xl font-bold text-virtara-gold"></p><p class="text-[11px] text-virtara-cream/50">Games Played</p></div>
+    <div class="arcade-stat p-4 text-center"><p id="statAch" class="text-xl font-bold text-virtara-gold"></p><p class="text-[11px] text-virtara-cream/50">Achievement</p></div>
+  </div>
+
+  <div class="grid sm:grid-cols-2 gap-6 mb-10">
+    <div class="arcade-card p-5">
+      <p class="text-xs text-virtara-cream/50 uppercase tracking-wider mb-2">Favorite Game</p>
+      <select id="favoriteGameSelect" class="w-full px-3 py-2 rounded-lg bg-virtara-surface border border-virtara-gold/30 text-sm">
+        <option value="">- Belum dipilih -</option>
+        <option value="quiz">Virtara Quiz</option>
+        <option value="gacha">Brewek VTuber</option>
+        <option value="tebak-gambar">Tebak Gambar</option>
+        <option value="memory">Memory Match</option>
+        <option value="tebak-siluet">Tebak Siluet</option>
+      </select>
+    </div>
+    <div class="arcade-card p-5">
+      <p class="text-xs text-virtara-cream/50 uppercase tracking-wider mb-2">Favorite Card</p>
+      <select id="favoriteCardSelect" class="w-full px-3 py-2 rounded-lg bg-virtara-surface border border-virtara-gold/30 text-sm"></select>
+    </div>
+  </div>
+
+  <div class="mb-10">
+    <p class="text-xs text-virtara-cream/50 uppercase tracking-wider mb-3">Koleksi Kartu</p>
+    <div class="arcade-card p-5">
+      <p id="collectionText" class="text-sm mb-2"></p>
+      <div class="xp-bar-track"><div id="collectionBar" class="xp-bar-fill"></div></div>
+    </div>
+  </div>
+
+  <div>
+    <p class="text-xs text-virtara-cream/50 uppercase tracking-wider mb-3">Achievements &amp; Badge</p>
+    <div id="achList" class="grid sm:grid-cols-2 gap-3"></div>
+  </div>
+
+</main>
+
+<script src="js/arcade-core.js"></script>
+<script src="js/arcade-shell.js"></script>
+<script>
+  function render() {
+    const p = ArcadeCore.getPlayer();
+    if (!p) return;
+    document.getElementById('avatarInitial').textContent = p.username.charAt(0).toUpperCase();
+    document.getElementById('usernameInput').value = p.username;
+    document.getElementById('joinDateText').textContent = `Bergabung ${new Date(p.joinDate).toLocaleDateString('id-ID', { day:'numeric', month:'long', year:'numeric' })}`;
+    const xpIntoLevel = p.xp - ArcadeCore.xpForLevel(p.level);
+    document.getElementById('profileXpBar').style.width = Math.min(100, xpIntoLevel) + '%';
+    document.getElementById('levelText').textContent = `Level ${p.level} • ${xpIntoLevel}/100 XP menuju level berikutnya`;
+
+    document.getElementById('statCoin').textContent = p.coin;
+    document.getElementById('statXp').textContent = p.xp;
+    document.getElementById('statGames').textContent = p.gamesPlayed.length + '/5';
+    document.getElementById('statAch').textContent = p.achievements.length;
+
+    document.getElementById('favoriteGameSelect').value = p.favoriteGame || '';
+
+    const owned = Object.keys(p.collection);
+    const favSelect = document.getElementById('favoriteCardSelect');
+    if (owned.length === 0) {
+      favSelect.innerHTML = '<option value="">Belum ada kartu</option>';
+    } else {
+      favSelect.innerHTML = owned.map(id => {
+        const c = ArcadeCore.CARD_BY_ID[id];
+        return `<option value="${id}">${c ? c.name : id}</option>`;
+      }).join('');
+      favSelect.value = p.favoriteCard || owned[0];
+    }
+
+    const stats = ArcadeCore.collectionStats();
+    document.getElementById('collectionText').textContent = `${stats.owned}/${stats.total} kartu (${stats.percent}%)`;
+    document.getElementById('collectionBar').style.width = stats.percent + '%';
+
+    document.getElementById('achList').innerHTML = ArcadeCore.ACHIEVEMENTS.map(a => {
+      const unlocked = p.achievements.includes(a.id);
+      return `
+        <div class="arcade-card p-4 flex items-center gap-3 ${unlocked ? '' : 'opacity-40'}">
+          <div class="w-10 h-10 rounded-full ${unlocked ? 'bg-virtara-gold/15' : 'bg-white/5'} flex items-center justify-center shrink-0">
+            <i data-lucide="${a.icon}" class="w-5 h-5 ${unlocked ? 'text-virtara-gold' : 'text-virtara-cream/30'}"></i>
+          </div>
+          <div>
+            <p class="font-semibold text-sm">${a.name}</p>
+            <p class="text-[11px] text-virtara-cream/50">${a.desc}</p>
+          </div>
+        </div>`;
+    }).join('');
+    lucide.createIcons();
+  }
+
+  document.getElementById('saveUsernameBtn').addEventListener('click', () => {
+    const val = document.getElementById('usernameInput').value.trim();
+    if (val.length < 3) { alert('Username minimal 3 karakter.'); return; }
+    ArcadeCore.renamePlayer(val);
+    render();
+    ArcadeShell.renderNav('profile.html');
+  });
+
+  document.getElementById('favoriteGameSelect').addEventListener('change', e => {
+    const p = ArcadeCore.getPlayer();
+    p.favoriteGame = e.target.value || null;
+    ArcadeCore.savePlayer(p);
+  });
+  document.getElementById('favoriteCardSelect').addEventListener('change', e => {
+    const p = ArcadeCore.getPlayer();
+    p.favoriteCard = e.target.value || null;
+    ArcadeCore.savePlayer(p);
+  });
+
+  ArcadeShell.init({
+    activePath: 'profile.html',
+    onReady: render
+  });
+</script>
+</body>
+</html>

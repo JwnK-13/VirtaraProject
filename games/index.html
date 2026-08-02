@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="id" class="h-full">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Virtara Arcade - Virtara Project</title>
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="arcade.css">
+<script>
+  tailwind.config = {
+    theme: { extend: {
+      colors: {
+        'virtara': { 'deep-red':'#8B1538','bright-red':'#C41E3A','gold':'#D4AF37','light-gold':'#F4D03F','cream':'#FDF5E6','warm-brown':'#8B4513','dark':'#1A0F0F','surface':'#2D1F1F','accent':'#E8C547' }
+      },
+      fontFamily: { 'display': ['Playfair Display','serif'], 'body': ['Plus Jakarta Sans','sans-serif'] }
+    } }
+  }
+</script>
+<style>.no-scrollbar::-webkit-scrollbar{display:none}</style>
+</head>
+<body class="h-full bg-virtara-dark text-virtara-cream font-body min-h-screen animated-gradient batik-pattern">
+
+<div id="arcadeNav"></div>
+
+<!-- Hero -->
+<section class="relative py-16 px-4 text-center overflow-hidden">
+  <div class="ornamental-divider max-w-md mx-auto mb-4"><span class="text-virtara-gold text-sm tracking-widest uppercase">Virtara Project</span></div>
+  <h1 class="text-4xl md:text-6xl font-display font-bold merdeka-gradient-text mb-4">Virtara Arcade</h1>
+  <p class="text-virtara-cream/80 max-w-xl mx-auto">Kumpulkan poin, koleksi kartu, dan jadilah pemain terbaik Virtara Project.</p>
+</section>
+
+<!-- Profile summary -->
+<section class="max-w-5xl mx-auto px-4 mb-12">
+  <div id="profileSummary" class="arcade-card p-6"></div>
+</section>
+
+<!-- Games grid -->
+<section class="max-w-6xl mx-auto px-4 mb-16">
+  <h2 class="font-display text-2xl font-bold text-virtara-gold mb-6">Pilih Game</h2>
+  <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+    <a href="quiz.html" class="arcade-card p-6 flex flex-col">
+      <div class="text-4xl mb-3">🧠</div>
+      <h3 class="font-display text-xl font-bold mb-1">Virtara Quiz</h3>
+      <p class="text-sm text-virtara-cream/60 flex-1">Uji wawasanmu soal Kemerdekaan Indonesia, VTuber Indonesia, dan Pengetahuan Umum.</p>
+      <span class="mt-4 text-virtara-gold text-sm font-medium flex items-center gap-1">Main sekarang <i data-lucide="arrow-right" class="w-4 h-4"></i></span>
+    </a>
+
+    <a href="gacha.html" class="arcade-card p-6 flex flex-col ring-1 ring-virtara-gold/40">
+      <div class="text-4xl mb-3">🎴</div>
+      <h3 class="font-display text-xl font-bold mb-1">Brewek VTuber</h3>
+      <p class="text-sm text-virtara-cream/60 flex-1">Game utama Virtara Arcade — gacha kartu talent tanpa batas. Unlimited Spin!</p>
+      <span class="mt-4 text-virtara-gold text-sm font-medium flex items-center gap-1">Main sekarang <i data-lucide="arrow-right" class="w-4 h-4"></i></span>
+    </a>
+
+    <a href="tebak-gambar.html" class="arcade-card p-6 flex flex-col">
+      <div class="text-4xl mb-3">🖼️</div>
+      <h3 class="font-display text-xl font-bold mb-1">Tebak Gambar</h3>
+      <p class="text-sm text-virtara-cream/60 flex-1">Tebak gambar yang diblur sebelum kehabisan percobaan.</p>
+      <span class="mt-4 text-virtara-gold text-sm font-medium flex items-center gap-1">Main sekarang <i data-lucide="arrow-right" class="w-4 h-4"></i></span>
+    </a>
+
+    <a href="memory.html" class="arcade-card p-6 flex flex-col">
+      <div class="text-4xl mb-3">🧩</div>
+      <h3 class="font-display text-xl font-bold mb-1">Memory Match</h3>
+      <p class="text-sm text-virtara-cream/60 flex-1">Cocokkan pasangan kartu member Virtara secepat mungkin.</p>
+      <span class="mt-4 text-virtara-gold text-sm font-medium flex items-center gap-1">Main sekarang <i data-lucide="arrow-right" class="w-4 h-4"></i></span>
+    </a>
+
+    <a href="tebak-siluet.html" class="arcade-card p-6 flex flex-col">
+      <div class="text-4xl mb-3">👤</div>
+      <h3 class="font-display text-xl font-bold mb-1">Tebak Siluet</h3>
+      <p class="text-sm text-virtara-cream/60 flex-1">Tebak karakter VTuber dari siluetnya. Jaga streak-mu!</p>
+      <span class="mt-4 text-virtara-gold text-sm font-medium flex items-center gap-1">Main sekarang <i data-lucide="arrow-right" class="w-4 h-4"></i></span>
+    </a>
+
+    <div class="arcade-card p-6 flex flex-col">
+      <div class="text-4xl mb-3">🎁</div>
+      <h3 class="font-display text-xl font-bold mb-1">Daily Reward</h3>
+      <p id="dailyDesc" class="text-sm text-virtara-cream/60 flex-1">Klaim hadiah harianmu setiap 24 jam.</p>
+      <button id="dailyBtn" class="mt-4 py-2 rounded-lg bg-gradient-to-r from-virtara-bright-red to-virtara-deep-red font-semibold text-sm hover:scale-[1.02] transition-transform">
+        Klaim Sekarang
+      </button>
+    </div>
+
+  </div>
+</section>
+
+<script src="js/arcade-core.js"></script>
+<script src="js/arcade-shell.js"></script>
+<script>
+  function renderProfile() {
+    const p = ArcadeCore.getPlayer();
+    const holder = document.getElementById('profileSummary');
+    if (!p) { holder.innerHTML = ''; return; }
+    const stats = ArcadeCore.collectionStats();
+    const xpIntoLevel = p.xp - ArcadeCore.xpForLevel(p.level);
+    holder.innerHTML = `
+      <div class="flex flex-col md:flex-row md:items-center gap-6">
+        <div class="flex items-center gap-4">
+          <div class="w-16 h-16 rounded-full bg-gradient-to-br from-virtara-bright-red to-virtara-gold flex items-center justify-center font-display text-2xl font-bold shrink-0">
+            ${p.username.charAt(0).toUpperCase()}
+          </div>
+          <div>
+            <p class="font-display text-xl font-bold">${p.username}</p>
+            <p class="text-xs text-virtara-cream/50">Level ${p.level} • ${p.badges.length} Badge</p>
+            <div class="xp-bar-track w-40 mt-2"><div class="xp-bar-fill" style="width:${Math.min(100, xpIntoLevel)}%"></div></div>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 flex-1">
+          <div class="arcade-stat p-3 text-center"><p class="text-lg font-bold text-virtara-gold">${p.coin}</p><p class="text-[11px] text-virtara-cream/50">Coin</p></div>
+          <div class="arcade-stat p-3 text-center"><p class="text-lg font-bold text-virtara-gold">${p.xp}</p><p class="text-[11px] text-virtara-cream/50">Total XP</p></div>
+          <div class="arcade-stat p-3 text-center"><p class="text-lg font-bold text-virtara-gold">${p.achievements.length}</p><p class="text-[11px] text-virtara-cream/50">Achievement</p></div>
+          <div class="arcade-stat p-3 text-center"><p class="text-lg font-bold text-virtara-gold">${p.gamesPlayed.length}/5</p><p class="text-[11px] text-virtara-cream/50">Games Played</p></div>
+        </div>
+      </div>
+      <p class="text-xs text-virtara-cream/40 mt-4">Koleksi kartu: ${stats.owned}/${stats.total} (${stats.percent}%)</p>
+    `;
+  }
+
+  function renderDaily() {
+    const btn = document.getElementById('dailyBtn');
+    const desc = document.getElementById('dailyDesc');
+    if (!ArcadeCore.hasPlayer()) return;
+    const can = ArcadeCore.canClaimDaily();
+    btn.disabled = !can;
+    btn.textContent = can ? 'Klaim Sekarang' : 'Sudah Diklaim';
+    btn.classList.toggle('opacity-50', !can);
+    btn.classList.toggle('cursor-not-allowed', !can);
+    desc.textContent = can ? 'Klaim hadiah harianmu setiap 24 jam.' : 'Kembali lagi besok untuk klaim berikutnya.';
+  }
+
+  document.getElementById('dailyBtn').addEventListener('click', () => {
+    const reward = ArcadeCore.claimDaily();
+    if (!reward) return;
+    alert(`Reward diterima!\n+${reward.coin} Coin\n+${reward.xp} XP\n+${reward.freeSpin} Free Spin (Brewek VTuber)`);
+    renderProfile();
+    renderDaily();
+    ArcadeShell.renderNav('index.html');
+  });
+
+  ArcadeShell.init({
+    activePath: 'index.html',
+    onReady: () => { renderProfile(); renderDaily(); lucide.createIcons(); }
+  });
+</script>
+</body>
+</html>

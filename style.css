@@ -300,3 +300,422 @@
     .news-image {
       transition: transform 0.5s ease;
     }
+
+    /* ==========================================
+       17 AGUSTUS / MERDEKA THEME
+       Subtle red-white Independence Day accents
+       layered on top of the existing brand theme.
+       ========================================== */
+
+    /* Navbar "17 Agustus" link */
+    .nav-link-merdeka {
+      color: #FDF5E6;
+      background: linear-gradient(90deg, #C41E3A, #8B1538);
+      padding: 0.4rem 0.9rem;
+      border-radius: 9999px;
+      box-shadow: 0 0 14px rgba(196, 30, 58, 0.35);
+    }
+
+    .nav-link-merdeka:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 20px rgba(196, 30, 58, 0.55);
+    }
+
+    .nav-link-merdeka-mobile {
+      color: #F4D03F;
+    }
+
+    /* Navbar HUT RI badge */
+    .hut-ri-badge {
+      background: linear-gradient(90deg, rgba(196, 30, 58, 0.15), rgba(253, 245, 230, 0.08));
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      color: #F4D03F;
+    }
+
+    /* Footer note */
+    .footer-merdeka-note {
+      color: #C41E3A;
+    }
+
+    /* Page background wash */
+    .merdeka-bg {
+      position: relative;
+    }
+
+    .merdeka-bg::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 15% 10%, rgba(196, 30, 58, 0.10), transparent 40%),
+        radial-gradient(circle at 85% 20%, rgba(253, 245, 230, 0.06), transparent 35%),
+        radial-gradient(circle at 50% 90%, rgba(212, 175, 55, 0.08), transparent 45%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Small waving mini flags row */
+    .mini-flag {
+      width: 20px;
+      height: 14px;
+      background: linear-gradient(to bottom, #C41E3A 50%, #FDF5E6 50%);
+      border-radius: 2px;
+      animation: miniFlagWave 2.4s ease-in-out infinite;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+
+    @keyframes miniFlagWave {
+      0%, 100% { transform: rotate(-4deg) scaleY(1); }
+      50% { transform: rotate(4deg) scaleY(0.96); }
+    }
+
+    /* Hero waving flag */
+    .waving-flag-wrap {
+      display: flex;
+      align-items: flex-start;
+      gap: 0;
+    }
+
+    .flag-pole {
+      width: 6px;
+      height: 220px;
+      background: linear-gradient(to bottom, #D4AF37, #8B4513);
+      border-radius: 3px;
+      order: -1;
+    }
+
+    .waving-flag {
+      width: 160px;
+      height: 110px;
+      position: relative;
+      transform-origin: left center;
+      animation: flagWave 3s ease-in-out infinite;
+      overflow: hidden;
+      border-radius: 0 6px 6px 0;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+    }
+
+    .flag-red, .flag-white {
+      width: 100%;
+      height: 50%;
+    }
+
+    .flag-red { background: #C41E3A; }
+    .flag-white { background: #FDF5E6; }
+
+    @keyframes flagWave {
+      0%, 100% { transform: perspective(300px) rotateY(0deg) skewY(0deg); }
+      25% { transform: perspective(300px) rotateY(6deg) skewY(1deg); }
+      50% { transform: perspective(300px) rotateY(0deg) skewY(-1deg); }
+      75% { transform: perspective(300px) rotateY(-6deg) skewY(1deg); }
+    }
+
+    @media (max-width: 640px) {
+      .waving-flag { width: 120px; height: 84px; }
+      .flag-pole { height: 170px; }
+    }
+
+    /* Merdeka gradient headline text */
+    .merdeka-gradient-text {
+      background: linear-gradient(90deg, #C41E3A, #F4D03F, #FDF5E6, #D4AF37, #C41E3A);
+      background-size: 300% auto;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: merdekaGradientShift 6s linear infinite;
+    }
+
+    @keyframes merdekaGradientShift {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 300% 50%; }
+    }
+
+    /* Cards */
+    .merdeka-card {
+      background: linear-gradient(145deg, rgba(45, 31, 31, 0.7), rgba(26, 15, 15, 0.85));
+      border: 1px solid rgba(212, 175, 55, 0.2);
+      position: relative;
+      z-index: 1;
+      transition: border-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .merdeka-card:hover {
+      border-color: rgba(196, 30, 58, 0.4);
+    }
+
+    .merdeka-card-featured {
+      border: 1px solid rgba(196, 30, 58, 0.35);
+      background:
+        linear-gradient(145deg, rgba(139, 21, 56, 0.25), rgba(26, 15, 15, 0.9));
+    }
+
+    /* Countdown */
+    .countdown-unit {
+      background: rgba(26, 15, 15, 0.6);
+      border: 1px solid rgba(212, 175, 55, 0.25);
+      border-radius: 1rem;
+      padding: 1rem 0.5rem;
+      transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+
+    .countdown-number {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: clamp(1.75rem, 5vw, 3rem);
+      background: linear-gradient(90deg, #D4AF37, #C41E3A);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      line-height: 1;
+    }
+
+    .countdown-label {
+      margin-top: 0.5rem;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(253, 245, 230, 0.6);
+    }
+
+    .countdown-imminent .countdown-unit {
+      animation: countdownPulse 1s ease-in-out infinite;
+      border-color: rgba(196, 30, 58, 0.6);
+    }
+
+    @keyframes countdownPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .celebration-burst {
+      animation: celebrationPop 1.2s ease-in-out infinite;
+    }
+
+    @keyframes celebrationPop {
+      0%, 100% { transform: scale(1) rotate(0deg); }
+      50% { transform: scale(1.15) rotate(-8deg); }
+    }
+
+    /* Event cards */
+    .merdeka-event-card {
+      background: rgba(45, 31, 31, 0.5);
+      border: 1px solid rgba(212, 175, 55, 0.15);
+      transition: all 0.35s ease;
+    }
+
+    .merdeka-event-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(196, 30, 58, 0.4);
+      box-shadow: 0 10px 30px rgba(196, 30, 58, 0.15);
+    }
+
+    /* Banner */
+    .merdeka-banner {
+      background: linear-gradient(120deg, #8B1538, #C41E3A 45%, #8B1538);
+      position: relative;
+    }
+
+    .merdeka-banner::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle, rgba(253,245,230,0.15) 1.5px, transparent 1.5px);
+      background-size: 26px 26px;
+      opacity: 0.5;
+    }
+
+    /* Confetti */
+    .confetti-piece {
+      position: absolute;
+      top: -20px;
+      border-radius: 2px;
+      animation: confettiFall linear forwards;
+      opacity: 0.9;
+    }
+
+    @keyframes confettiFall {
+      0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(105vh) rotate(540deg);
+        opacity: 0;
+      }
+    }
+
+    /* Respect users who prefer reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      .mini-flag, .waving-flag, .merdeka-gradient-text, .countdown-imminent .countdown-unit,
+      .celebration-burst, .confetti-piece {
+        animation: none !important;
+      }
+    }
+    /* ==========================================
+       GLOBAL MERDEKA AMBIENCE (present on every page)
+       ========================================== */
+    .merdeka-corner-ribbon {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 90px;
+      height: 90px;
+      pointer-events: none;
+      z-index: 30;
+      overflow: hidden;
+    }
+    .merdeka-corner-ribbon::before {
+      content: '';
+      position: absolute;
+      top: 16px;
+      right: -34px;
+      width: 140px;
+      height: 24px;
+      background: linear-gradient(90deg, #8B1538, #C41E3A 45%, #D4AF37 95%);
+      transform: rotate(45deg);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.35);
+      opacity: 0.9;
+    }
+
+    .merdeka-watermark {
+      position: fixed;
+      bottom: -30px;
+      right: -30px;
+      width: 300px;
+      height: 300px;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.035;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cpath fill='%23D4AF37' d='M100 8 L118 48 L158 38 L133 74 L168 88 L128 99 L152 133 L113 117 L106 158 L94 119 L60 143 L74 104 L36 99 L71 82 L46 49 L84 61 Z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-size: contain;
+    }
+
+    @media (max-width: 768px) {
+      .merdeka-watermark { width: 170px; height: 170px; }
+      .merdeka-corner-ribbon { width: 60px; height: 60px; }
+    }
+
+    /* Ornamental divider — subtle red-white-gold accent dots */
+    .ornamental-divider > span::before,
+    .ornamental-divider > span::after {
+      content: '';
+      display: inline-block;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #C41E3A;
+      vertical-align: middle;
+      margin: 0 8px;
+      box-shadow: 0 0 6px rgba(196, 30, 58, 0.6);
+    }
+
+    /* Footer ribbon top border */
+    footer {
+      position: relative;
+    }
+    footer::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #C41E3A 0%, #FDF5E6 25%, #D4AF37 50%, #FDF5E6 75%, #C41E3A 100%);
+      background-size: 200% auto;
+      animation: merdekaGradientShift 8s linear infinite;
+    }
+
+    /* JS toggled "show more" buttons for message sections */
+    #pesanMoreBtnHome:not(.hidden),
+    #pesanMoreBtnAll:not(.hidden) {
+      display: inline-flex;
+    }
+
+    /* ==========================================
+       PESAN KEMERDEKAAN (message board)
+       ========================================== */
+    .pesan-card {
+      background: linear-gradient(145deg, rgba(45, 31, 31, 0.7), rgba(26, 15, 15, 0.85));
+      border: 1px solid rgba(212, 175, 55, 0.2);
+      border-radius: 1rem;
+      padding: 1.25rem;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+
+    .pesan-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(196, 30, 58, 0.4);
+    }
+
+    .pesan-card::before {
+      content: '\201C';
+      position: absolute;
+      top: 0.25rem;
+      right: 1rem;
+      font-family: 'Playfair Display', serif;
+      font-size: 2.75rem;
+      color: rgba(212, 175, 55, 0.15);
+      line-height: 1;
+    }
+
+    /* Cover banner */
+    .cover-banner {
+      background: linear-gradient(120deg, rgba(139, 21, 56, 0.35), rgba(45, 31, 31, 0.85));
+      border: 1px solid rgba(212, 175, 55, 0.25);
+      transition: all 0.4s ease;
+      cursor: pointer;
+    }
+
+    .cover-banner:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 15px 40px rgba(196, 30, 58, 0.25);
+      border-color: rgba(212, 175, 55, 0.5);
+    }
+
+    /* Pagination buttons */
+    .pesan-page-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 0.5rem;
+      border: 1px solid rgba(212, 175, 55, 0.25);
+      color: #FDF5E6;
+      font-size: 0.875rem;
+      transition: all 0.2s ease;
+    }
+
+    .pesan-page-btn.active,
+    .pesan-page-btn:hover {
+      background: linear-gradient(90deg, #C41E3A, #8B1538);
+      border-color: transparent;
+      color: #FDF5E6;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      footer::before { animation: none !important; }
+    }
+
+/* --- 3. Independence Edition Navbar --- */
+header, nav, .navbar {
+  background: linear-gradient(180deg, rgba(180, 0, 20, 0.85) 0%, rgba(15, 15, 15, 0.95) 100%) !important;
+  border-bottom: 2px solid var(--id-gold) !important;
+  box-shadow: 0 4px 25px rgba(214, 0, 28, 0.3) !important;
+  backdrop-filter: blur(10px);
+  position: relative;
+}
+
+header::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--id-gold), transparent);
+  animation: shimmerBorder 3s infinite linear;
+}
+
+
+    

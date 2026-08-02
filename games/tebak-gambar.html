@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="id" class="h-full">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tebak Gambar - Virtara Arcade</title>
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="arcade.css">
+<script>
+  tailwind.config = { theme: { extend: {
+    colors: { 'virtara': { 'deep-red':'#8B1538','bright-red':'#C41E3A','gold':'#D4AF37','light-gold':'#F4D03F','cream':'#FDF5E6','warm-brown':'#8B4513','dark':'#1A0F0F','surface':'#2D1F1F','accent':'#E8C547' } },
+    fontFamily: { 'display': ['Playfair Display','serif'], 'body': ['Plus Jakarta Sans','sans-serif'] }
+  } } }
+</script>
+<style>.no-scrollbar::-webkit-scrollbar{display:none}</style>
+</head>
+<body class="h-full bg-virtara-dark text-virtara-cream font-body min-h-screen animated-gradient batik-pattern">
+
+<div id="arcadeNav"></div>
+
+<main class="max-w-lg mx-auto px-4 py-12 text-center">
+  <h1 class="font-display text-3xl md:text-4xl font-bold merdeka-gradient-text mb-2">🖼️ Tebak Gambar</h1>
+  <p class="text-virtara-cream/70 mb-8">Tebak karakter di balik gambar buram sebelum kehabisan percobaan.</p>
+
+  <div id="gameArea">
+    <p id="attemptInfo" class="text-sm text-virtara-cream/60 mb-3"></p>
+    <div class="arcade-card p-4 mb-6 overflow-hidden">
+      <img id="guessImage" class="w-full aspect-square object-cover rounded-lg blur-reveal" style="filter: blur(24px)">
+    </div>
+    <div id="guessOptions" class="grid grid-cols-2 gap-3 mb-6"></div>
+  </div>
+
+  <div id="resultArea" class="hidden arcade-card p-8">
+    <i data-lucide="image" class="w-12 h-12 text-virtara-gold mx-auto mb-3"></i>
+    <h2 id="resultTitle" class="font-display text-2xl font-bold mb-2"></h2>
+    <p id="resultDesc" class="text-virtara-cream/70 mb-6"></p>
+    <div class="flex flex-col sm:flex-row gap-3 justify-center">
+      <button id="nextRoundBtn" class="px-6 py-3 rounded-lg bg-gradient-to-r from-virtara-bright-red to-virtara-deep-red font-semibold gold-glow hover:scale-[1.02] transition-transform">Main Lagi</button>
+      <a href="leaderboard.html?game=tebak-gambar" class="px-6 py-3 rounded-lg border border-virtara-gold/50 hover:bg-virtara-gold/10 transition-colors">Leaderboard</a>
+    </div>
+  </div>
+</main>
+
+<script src="js/arcade-core.js"></script>
+<script src="js/arcade-shell.js"></script>
+<script>
+  const BLUR_STEPS = [24, 18, 12, 7, 3];
+  const POINTS = [5, 4, 3, 2, 1];
+  let pool = [];
+  let target = null;
+  let attempt = 0;
+  let totalScore = 0;
+
+  function buildPool() {
+    // Only cards with a real image make good "guess" targets.
+    return ArcadeCore.CARD_DB.filter(c => c.image);
+  }
+
+  function newRound() {
+    attempt = 0;
+    pool = buildPool();
+    target = pool[Math.floor(Math.random() * pool.length)];
+    document.getElementById('resultArea').classList.add('hidden');
+    document.getElementById('gameArea').classList.remove('hidden');
+    document.getElementById('guessImage').src = target.image;
+    updateBlur();
+    renderOptions();
+  }
+
+  function updateBlur() {
+    document.getElementById('guessImage').style.filter = `blur(${BLUR_STEPS[attempt]}px)`;
+    document.getElementById('attemptInfo').textContent = `Percobaan ${attempt + 1} / 5`;
+  }
+
+  function renderOptions() {
+    const distractors = pool.filter(c => c.id !== target.id).sort(() => Math.random() - 0.5).slice(0, 3);
+    const options = [target, ...distractors].sort(() => Math.random() - 0.5);
+    const holder = document.getElementById('guessOptions');
+    holder.innerHTML = options.map(c => `
+      <button data-id="${c.id}" class="guess-btn px-4 py-3 rounded-lg border border-virtara-gold/25 hover:border-virtara-gold hover:bg-virtara-gold/10 transition-colors text-sm">
+        ${c.name}
+      </button>`).join('');
+    holder.querySelectorAll('.guess-btn').forEach(btn => btn.addEventListener('click', () => guess(btn.dataset.id)));
+  }
+
+  function guess(cardId) {
+    if (cardId === target.id) {
+      const points = POINTS[attempt];
+      totalScore += points;
+      finishRound(true, points);
+    } else {
+      attempt += 1;
+      if (attempt >= 5) {
+        finishRound(false, 0);
+      } else {
+        updateBlur();
+        renderOptions();
+      }
+    }
+  }
+
+  function finishRound(correct, points) {
+    ArcadeCore.markGamePlayed('tebak-gambar');
+    document.getElementById('gameArea').classList.add('hidden');
+    document.getElementById('resultArea').classList.remove('hidden');
+    document.getElementById('guessImage').style.filter = 'blur(0px)';
+    document.getElementById('resultTitle').textContent = correct ? `Benar! +${points} Poin` : 'Kehabisan Percobaan';
+    document.getElementById('resultDesc').textContent = `Jawabannya adalah ${target.name}. Total skor sesi ini: ${totalScore} poin.`;
+
+    if (correct) {
+      ArcadeCore.addXp(points * 2);
+      ArcadeCore.addCoin(points);
+      if (attempt === 0) ArcadeShell.unlockWithToast('guess_master');
+    }
+
+    const p = ArcadeCore.getPlayer();
+    ArcadeCore.ArcadeDB.submitScore('tebak-gambar', { uuid: p.uuid, username: p.username, score: totalScore });
+    ArcadeShell.renderNav('tebak-gambar.html');
+  }
+
+  document.getElementById('nextRoundBtn').addEventListener('click', newRound);
+
+  ArcadeShell.init({
+    activePath: 'tebak-gambar.html',
+    onReady: () => { newRound(); lucide.createIcons(); }
+  });
+</script>
+</body>
+</html>

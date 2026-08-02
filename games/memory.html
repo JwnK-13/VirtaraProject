@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="id" class="h-full">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Memory Match - Virtara Arcade</title>
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="arcade.css">
+<script>
+  tailwind.config = { theme: { extend: {
+    colors: { 'virtara': { 'deep-red':'#8B1538','bright-red':'#C41E3A','gold':'#D4AF37','light-gold':'#F4D03F','cream':'#FDF5E6','warm-brown':'#8B4513','dark':'#1A0F0F','surface':'#2D1F1F','accent':'#E8C547' } },
+    fontFamily: { 'display': ['Playfair Display','serif'], 'body': ['Plus Jakarta Sans','sans-serif'] }
+  } } }
+</script>
+<style>.no-scrollbar::-webkit-scrollbar{display:none}
+.diff-btn.active { background: rgba(212,175,55,0.2); color:#D4AF37; border-color:#D4AF37; }
+</style>
+</head>
+<body class="h-full bg-virtara-dark text-virtara-cream font-body min-h-screen animated-gradient batik-pattern">
+
+<div id="arcadeNav"></div>
+
+<main class="max-w-3xl mx-auto px-4 py-10 text-center">
+  <h1 class="font-display text-3xl md:text-4xl font-bold merdeka-gradient-text mb-2">🧩 Memory Match</h1>
+  <p class="text-virtara-cream/70 mb-6">Cocokkan pasangan kartu member Virtara secepat mungkin.</p>
+
+  <div class="flex justify-center gap-2 mb-6">
+    <button data-diff="easy" class="diff-btn px-4 py-2 rounded-lg border border-virtara-gold/25 text-sm">Easy</button>
+    <button data-diff="medium" class="diff-btn px-4 py-2 rounded-lg border border-virtara-gold/25 text-sm">Medium</button>
+    <button data-diff="hard" class="diff-btn px-4 py-2 rounded-lg border border-virtara-gold/25 text-sm">Hard</button>
+  </div>
+
+  <div class="flex justify-center gap-4 mb-6 text-sm">
+    <div class="arcade-stat px-4 py-2">⏱ <span id="timerDisplay">00:00</span></div>
+    <div class="arcade-stat px-4 py-2">🖱 <span id="movesDisplay">0</span> Langkah</div>
+  </div>
+
+  <div id="memoryGrid" class="grid gap-3 mx-auto max-w-2xl"></div>
+
+  <div id="winArea" class="hidden arcade-card p-8 mt-8">
+    <i data-lucide="party-popper" class="w-12 h-12 text-virtara-gold mx-auto mb-3"></i>
+    <h2 class="font-display text-2xl font-bold mb-2">Selesai!</h2>
+    <p id="winDesc" class="text-virtara-cream/70 mb-6"></p>
+    <div class="flex flex-col sm:flex-row gap-3 justify-center">
+      <button id="playAgainMemBtn" class="px-6 py-3 rounded-lg bg-gradient-to-r from-virtara-bright-red to-virtara-deep-red font-semibold gold-glow hover:scale-[1.02] transition-transform">Main Lagi</button>
+      <a href="leaderboard.html?game=memory" class="px-6 py-3 rounded-lg border border-virtara-gold/50 hover:bg-virtara-gold/10 transition-colors">Leaderboard</a>
+    </div>
+  </div>
+</main>
+
+<script src="js/arcade-core.js"></script>
+<script src="js/arcade-shell.js"></script>
+<script>
+  const DIFFICULTY = {
+    easy:   { pairs: 6, cols: 4 },
+    medium: { pairs: 8, cols: 4 },
+    hard:   { pairs: 10, cols: 5 },
+  };
+
+  function uniqueImages() {
+    const seen = new Set();
+    const list = [];
+    ArcadeCore.CARD_DB.forEach(c => {
+      if (c.image && !seen.has(c.image)) { seen.add(c.image); list.push({ id: c.id, name: c.name, image: c.image }); }
+    });
+    return list;
+  }
+
+  let difficulty = 'easy';
+  let tiles = [];
+  let flipped = [];
+  let matchedCount = 0;
+  let moves = 0;
+  let timerInterval = null;
+  let seconds = 0;
+  let locked = false;
+
+  function setDifficulty(d) {
+    difficulty = d;
+    document.querySelectorAll('.diff-btn').forEach(b => b.classList.toggle('active', b.dataset.diff === d));
+    startGame();
+  }
+
+  function startGame() {
+    clearInterval(timerInterval);
+    seconds = 0;
+    moves = 0;
+    matchedCount = 0;
+    flipped = [];
+    locked = false;
+    document.getElementById('timerDisplay').textContent = '00:00';
+    document.getElementById('movesDisplay').textContent = '0';
+    document.getElementById('winArea').classList.add('hidden');
+
+    const conf = DIFFICULTY[difficulty];
+    const pool = uniqueImages().sort(() => Math.random() - 0.5).slice(0, conf.pairs);
+    const pairSet = [...pool, ...pool].map((c, i) => ({ uid: i, cardId: c.id, name: c.name, image: c.image }))
+      .sort(() => Math.random() - 0.5);
+    tiles = pairSet;
+
+    const grid = document.getElementById('memoryGrid');
+    grid.style.gridTemplateColumns = `repeat(${conf.cols}, minmax(0, 1fr))`;
+    grid.innerHTML = tiles.map(t => `
+      <div class="memory-tile" data-uid="${t.uid}" data-card="${t.cardId}">
+        <div class="memory-tile-inner">
+          <div class="memory-tile-face memory-tile-back flex items-center justify-center">
+            <i data-lucide="help-circle" class="w-6 h-6 text-virtara-gold/70"></i>
+          </div>
+          <div class="memory-tile-face memory-tile-front">
+            <img src="${t.image}" class="w-full h-full object-cover" alt="">
+          </div>
+        </div>
+      </div>`).join('');
+    lucide.createIcons();
+    grid.querySelectorAll('.memory-tile').forEach(el => el.addEventListener('click', () => flipTile(el)));
+  }
+
+  function startTimerIfNeeded() {
+    if (timerInterval) return;
+    timerInterval = setInterval(() => {
+      seconds += 1;
+      const m = String(Math.floor(seconds / 60)).padStart(2, '0');
+      const s = String(seconds % 60).padStart(2, '0');
+      document.getElementById('timerDisplay').textContent = `${m}:${s}`;
+    }, 1000);
+  }
+
+  function flipTile(el) {
+    if (locked) return;
+    if (el.classList.contains('flipped') || el.classList.contains('matched')) return;
+    startTimerIfNeeded();
+    el.classList.add('flipped');
+    flipped.push(el);
+    if (flipped.length === 2) {
+      moves += 1;
+      document.getElementById('movesDisplay').textContent = moves;
+      const [a, b] = flipped;
+      if (a.dataset.card === b.dataset.card) {
+        a.classList.add('matched');
+        b.classList.add('matched');
+        flipped = [];
+        matchedCount += 1;
+        if (matchedCount === DIFFICULTY[difficulty].pairs) finishGame();
+      } else {
+        locked = true;
+        setTimeout(() => {
+          a.classList.remove('flipped');
+          b.classList.remove('flipped');
+          flipped = [];
+          locked = false;
+        }, 800);
+      }
+    }
+  }
+
+  function finishGame() {
+    clearInterval(timerInterval);
+    ArcadeCore.markGamePlayed('memory');
+    const score = Math.max(50, 2000 - seconds * 4 - moves * 8);
+    document.getElementById('winArea').classList.remove('hidden');
+    document.getElementById('winDesc').textContent = `Waktu: ${document.getElementById('timerDisplay').textContent} • Langkah: ${moves} • Skor: ${score}`;
+    ArcadeCore.addXp(Math.round(score / 10));
+    ArcadeCore.addCoin(Math.round(score / 50));
+    if (difficulty === 'hard') ArcadeShell.unlockWithToast('memory_master');
+
+    const p = ArcadeCore.getPlayer();
+    ArcadeCore.ArcadeDB.submitScore('memory', { uuid: p.uuid, username: p.username, score, seconds, moves, difficulty });
+    ArcadeShell.renderNav('memory.html');
+  }
+
+  document.querySelectorAll('.diff-btn').forEach(b => b.addEventListener('click', () => setDifficulty(b.dataset.diff)));
+  document.getElementById('playAgainMemBtn').addEventListener('click', startGame);
+
+  ArcadeShell.init({
+    activePath: 'memory.html',
+    onReady: () => { setDifficulty('easy'); }
+  });
+</script>
+</body>
+</html>

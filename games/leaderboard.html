@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="id" class="h-full">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leaderboard - Virtara Arcade</title>
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="arcade.css">
+<script>
+  tailwind.config = { theme: { extend: {
+    colors: { 'virtara': { 'deep-red':'#8B1538','bright-red':'#C41E3A','gold':'#D4AF37','light-gold':'#F4D03F','cream':'#FDF5E6','warm-brown':'#8B4513','dark':'#1A0F0F','surface':'#2D1F1F','accent':'#E8C547' } },
+    fontFamily: { 'display': ['Playfair Display','serif'], 'body': ['Plus Jakarta Sans','sans-serif'] }
+  } } }
+</script>
+<style>.no-scrollbar::-webkit-scrollbar{display:none}
+.gtab.active { color:#D4AF37; border-color:#D4AF37; }
+</style>
+</head>
+<body class="h-full bg-virtara-dark text-virtara-cream font-body min-h-screen animated-gradient batik-pattern">
+
+<div id="arcadeNav"></div>
+
+<main class="max-w-3xl mx-auto px-4 py-10">
+  <h1 class="font-display text-3xl md:text-4xl font-bold merdeka-gradient-text mb-2 text-center">🏆 Leaderboard</h1>
+  <p class="text-virtara-cream/70 text-center mb-4">Top pemain Virtara Arcade.</p>
+  <p class="text-xs text-virtara-cream/40 text-center mb-8 max-w-md mx-auto">Catatan: leaderboard saat ini tersimpan lokal per-browser. Leaderboard global lintas pengunjung akan aktif setelah backend (Supabase/Firebase) terhubung.</p>
+
+  <div class="flex flex-wrap justify-center gap-2 mb-8 border-b border-virtara-gold/15">
+    <button data-g="quiz" class="gtab px-4 py-3 text-sm font-medium border-b-2 border-transparent">Quiz</button>
+    <button data-g="gacha" class="gtab px-4 py-3 text-sm font-medium border-b-2 border-transparent">Brewek VTuber</button>
+    <button data-g="tebak-gambar" class="gtab px-4 py-3 text-sm font-medium border-b-2 border-transparent">Tebak Gambar</button>
+    <button data-g="memory" class="gtab px-4 py-3 text-sm font-medium border-b-2 border-transparent">Memory Match</button>
+    <button data-g="tebak-siluet" class="gtab px-4 py-3 text-sm font-medium border-b-2 border-transparent">Tebak Siluet</button>
+  </div>
+
+  <div id="lbList" class="space-y-2"></div>
+</main>
+
+<script src="js/arcade-core.js"></script>
+<script src="js/arcade-shell.js"></script>
+<script>
+  function rowShell(rank, username, right, sub) {
+    return `
+      <div class="arcade-card px-4 py-3 flex items-center gap-4">
+        <div class="w-8 text-center font-display font-bold ${rank <= 3 ? 'text-virtara-gold' : 'text-virtara-cream/50'}">${rank}</div>
+        <div class="w-9 h-9 rounded-full bg-gradient-to-br from-virtara-bright-red to-virtara-gold flex items-center justify-center font-bold shrink-0">${username.charAt(0).toUpperCase()}</div>
+        <div class="flex-1 min-w-0">
+          <p class="font-semibold text-sm truncate">${username}</p>
+          ${sub ? `<p class="text-[11px] text-virtara-cream/40">${sub}</p>` : ''}
+        </div>
+        <div class="text-virtara-gold font-semibold text-sm text-right">${right}</div>
+      </div>`;
+  }
+
+  async function renderGachaBoard() {
+    let list = await ArcadeCore.ArcadeDB.getLeaderboard('gacha', 100);
+    list.sort((a, b) => {
+      if (b.rarityRank !== a.rarityRank) return b.rarityRank - a.rarityRank;
+      if (b.collection !== a.collection) return b.collection - a.collection;
+      if (b.coin !== a.coin) return b.coin - a.coin;
+      return a.pulls - b.pulls; // fewer pulls wins tie
+    });
+    return list.map((e, i) => rowShell(i + 1, e.username, e.rarityLabel, `${e.collection} koleksi • ${e.coin} coin • ${e.pulls} pull`)).join('');
+  }
+
+  async function renderStandardBoard(gameId, subFn) {
+    const list = await ArcadeCore.ArcadeDB.getLeaderboard(gameId, 100);
+    return list.map((e, i) => rowShell(i + 1, e.username, e.score + ' poin', subFn ? subFn(e) : new Date(e.date).toLocaleDateString('id-ID'))).join('');
+  }
+
+  async function renderBoard(gameId) {
+    const holder = document.getElementById('lbList');
+    holder.innerHTML = '<p class="text-center text-virtara-cream/40 text-sm py-8">Memuat...</p>';
+    let html = '';
+    if (gameId === 'gacha') html = await renderGachaBoard();
+    else if (gameId === 'memory') html = await renderStandardBoard('memory', e => `${e.difficulty} • ${e.seconds}s • ${e.moves} langkah`);
+    else if (gameId === 'tebak-siluet') html = await renderStandardBoard('tebak-siluet', e => `Best streak: ${e.bestStreak || 0}`);
+    else html = await renderStandardBoard(gameId);
+    holder.innerHTML = html || '<p class="text-center text-virtara-cream/40 text-sm py-8">Belum ada skor. Jadilah yang pertama!</p>';
+  }
+
+  function selectTab(gameId) {
+    document.querySelectorAll('.gtab').forEach(b => b.classList.toggle('active', b.dataset.g === gameId));
+    renderBoard(gameId);
+  }
+
+  document.querySelectorAll('.gtab').forEach(b => b.addEventListener('click', () => selectTab(b.dataset.g)));
+
+  ArcadeShell.init({
+    activePath: 'leaderboard.html',
+    onReady: () => {
+      const params = new URLSearchParams(location.search);
+      const initial = params.get('game') || 'quiz';
+      selectTab(initial);
+    }
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,152 @@
+/* Virtara Arcade — shared styles. Reuses colors/fonts from the main site
+   Tailwind config (virtara-gold, bright-red, deep-red, cream, dark, surface). */
+
+.arcade-card {
+  background: linear-gradient(145deg, rgba(45,31,31,0.9), rgba(26,15,15,0.95));
+  border: 1px solid rgba(212,175,55,0.25);
+  border-radius: 1rem;
+  transition: all .35s ease;
+}
+.arcade-card:hover {
+  border-color: rgba(212,175,55,0.7);
+  box-shadow: 0 0 40px rgba(212,175,55,0.18);
+  transform: translateY(-4px);
+}
+
+.arcade-stat {
+  background: rgba(212,175,55,0.08);
+  border: 1px solid rgba(212,175,55,0.2);
+  border-radius: 0.75rem;
+}
+
+/* ---- Rarity colors / glow ---- */
+.rarity-common     { --rc: #9CA3AF; }
+.rarity-uncommon    { --rc: #4ADE80; }
+.rarity-rare       { --rc: #38BDF8; }
+.rarity-epic       { --rc: #A78BFA; }
+.rarity-legendary  { --rc: #F4D03F; }
+.rarity-mythic     { --rc: #C41E3A; }
+.rarity-staff      { --rc: #22D3EE; }
+.rarity-founder    { --rc: #D4AF37; }
+
+.gacha-card {
+  border: 2px solid var(--rc, #9CA3AF);
+  border-radius: 1rem;
+  box-shadow: 0 0 18px color-mix(in srgb, var(--rc, #9CA3AF) 45%, transparent);
+  background: linear-gradient(160deg, rgba(45,31,31,0.95), rgba(20,12,12,0.98));
+  position: relative;
+  overflow: hidden;
+}
+.gacha-card .rarity-tag {
+  color: var(--rc, #9CA3AF);
+  border: 1px solid var(--rc, #9CA3AF);
+  text-shadow: 0 0 8px color-mix(in srgb, var(--rc, #9CA3AF) 60%, transparent);
+}
+
+.gacha-card.rarity-legendary,
+.gacha-card.rarity-mythic,
+.gacha-card.rarity-staff,
+.gacha-card.rarity-founder {
+  animation: rarityPulse 1.8s ease-in-out infinite;
+}
+@keyframes rarityPulse {
+  0%, 100% { box-shadow: 0 0 18px color-mix(in srgb, var(--rc) 45%, transparent); }
+  50% { box-shadow: 0 0 42px color-mix(in srgb, var(--rc) 80%, transparent); }
+}
+
+.gacha-card.rarity-founder::before,
+.gacha-card.rarity-staff::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(120deg, transparent, color-mix(in srgb, var(--rc) 30%, transparent), transparent);
+  animation: shimmer 2.2s linear infinite;
+}
+@keyframes shimmer {
+  0% { transform: translateX(-120%) rotate(8deg); }
+  100% { transform: translateX(120%) rotate(8deg); }
+}
+
+/* ---- Spin / pack opening ---- */
+.spin-pack {
+  width: 140px; height: 190px;
+  border-radius: 1rem;
+  background: linear-gradient(145deg, #8B1538, #C41E3A);
+  border: 2px solid #D4AF37;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: transform .25s ease;
+}
+.spin-pack:hover { transform: scale(1.05) rotate(-1deg); }
+.spin-pack.opening { animation: packShake .6s ease; }
+@keyframes packShake {
+  0%, 100% { transform: rotate(0); }
+  20% { transform: rotate(-6deg); }
+  40% { transform: rotate(6deg); }
+  60% { transform: rotate(-4deg); }
+  80% { transform: rotate(4deg); }
+}
+
+.card-flip-enter {
+  animation: cardFlipIn .6s cubic-bezier(.2,.8,.2,1);
+}
+@keyframes cardFlipIn {
+  0% { transform: rotateY(90deg) scale(.6); opacity: 0; }
+  60% { transform: rotateY(-10deg) scale(1.03); opacity: 1; }
+  100% { transform: rotateY(0) scale(1); opacity: 1; }
+}
+
+/* ---- Achievement toast ---- */
+.achievement-toast {
+  position: fixed; top: 90px; right: 20px; z-index: 200;
+  background: linear-gradient(135deg, rgba(45,31,31,0.98), rgba(20,12,12,0.98));
+  border: 1px solid #D4AF37;
+  box-shadow: 0 0 30px rgba(212,175,55,0.35);
+  border-radius: .75rem;
+  animation: toastIn .4s ease, toastOut .4s ease 3.6s forwards;
+}
+@keyframes toastIn { from { transform: translateX(120%); opacity:0;} to { transform: translateX(0); opacity:1;} }
+@keyframes toastOut { to { transform: translateX(120%); opacity:0;} }
+
+/* ---- Progress bar ---- */
+.xp-bar-track { background: rgba(212,175,55,0.12); border-radius: 999px; overflow: hidden; height: 8px; }
+.xp-bar-fill { background: linear-gradient(90deg, #D4AF37, #F4D03F); height: 100%; transition: width .4s ease; }
+
+/* ---- Memory match tile ---- */
+.memory-tile {
+  aspect-ratio: 3/4;
+  border-radius: .6rem;
+  cursor: pointer;
+  perspective: 800px;
+}
+.memory-tile-inner {
+  position: relative; width: 100%; height: 100%;
+  transition: transform .45s;
+  transform-style: preserve-3d;
+}
+.memory-tile.flipped .memory-tile-inner,
+.memory-tile.matched .memory-tile-inner { transform: rotateY(180deg); }
+.memory-tile-face {
+  position: absolute; inset: 0; backface-visibility: hidden;
+  border-radius: .6rem; display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.memory-tile-back {
+  background: linear-gradient(145deg, #8B1538, #2D1F1F);
+  border: 1px solid rgba(212,175,55,0.4);
+}
+.memory-tile-front {
+  background: #1A0F0F; border: 1px solid #D4AF37;
+  transform: rotateY(180deg);
+}
+.memory-tile.matched { opacity: .55; }
+
+/* ---- Blur reveal (Tebak Gambar) ---- */
+.blur-reveal { transition: filter .5s ease; }
+
+/* Virtara ID modal */
+.vid-modal-backdrop {
+  position: fixed; inset: 0; z-index: 300;
+  background: rgba(10,6,6,0.92);
+  backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center;
+}

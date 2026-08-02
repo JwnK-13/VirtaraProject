@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="id" class="h-full">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brewek VTuber - Virtara Arcade</title>
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="arcade.css">
+<script>
+  tailwind.config = { theme: { extend: {
+    colors: { 'virtara': { 'deep-red':'#8B1538','bright-red':'#C41E3A','gold':'#D4AF37','light-gold':'#F4D03F','cream':'#FDF5E6','warm-brown':'#8B4513','dark':'#1A0F0F','surface':'#2D1F1F','accent':'#E8C547' } },
+    fontFamily: { 'display': ['Playfair Display','serif'], 'body': ['Plus Jakarta Sans','sans-serif'] }
+  } } }
+</script>
+<style>.no-scrollbar::-webkit-scrollbar{display:none}
+.tab-btn.active { color:#D4AF37; border-color:#D4AF37; }
+</style>
+</head>
+<body class="h-full bg-virtara-dark text-virtara-cream font-body min-h-screen animated-gradient batik-pattern">
+
+<div id="arcadeNav"></div>
+
+<main class="max-w-5xl mx-auto px-4 py-10">
+  <div class="text-center mb-8">
+    <h1 class="font-display text-3xl md:text-4xl font-bold merdeka-gradient-text mb-2">🎴 Brewek VTuber</h1>
+    <p class="text-virtara-cream/70">Gacha kartu talent Virtara — Unlimited Spin!</p>
+  </div>
+
+  <div class="flex justify-center gap-2 mb-8 border-b border-virtara-gold/15">
+    <button data-tab="spin" class="tab-btn active px-5 py-3 text-sm font-medium border-b-2 border-transparent">Spin</button>
+    <button data-tab="collection" class="tab-btn px-5 py-3 text-sm font-medium border-b-2 border-transparent">Koleksi</button>
+    <button data-tab="upgrade" class="tab-btn px-5 py-3 text-sm font-medium border-b-2 border-transparent">Upgrade</button>
+  </div>
+
+  <!-- SPIN TAB -->
+  <div id="tab-spin">
+    <div class="flex justify-center gap-4 mb-8 text-sm">
+      <div class="arcade-stat px-4 py-2"><span class="text-virtara-gold font-semibold" id="coinDisplay">0</span> Coin</div>
+      <div class="arcade-stat px-4 py-2"><span class="text-virtara-gold font-semibold" id="pullDisplay">0</span> Total Pull</div>
+    </div>
+
+    <div class="flex flex-col items-center gap-8">
+      <div id="spinStage" class="flex items-center justify-center min-h-[220px]">
+        <div id="spinPack" class="spin-pack">
+          <i data-lucide="gift" class="w-10 h-10 text-virtara-gold"></i>
+        </div>
+      </div>
+      <button id="spinBtn" class="px-10 py-4 rounded-full bg-gradient-to-r from-virtara-bright-red to-virtara-deep-red font-display font-bold text-lg gold-glow hover:scale-105 transition-transform">
+        SPIN
+      </button>
+      <div id="autoSpinRow" class="hidden flex-col items-center gap-2">
+        <button id="autoSpin5Btn" class="px-6 py-2 rounded-lg border border-virtara-gold/40 hover:bg-virtara-gold/10 transition-colors text-sm">Auto Spin x5</button>
+      </div>
+    </div>
+
+    <div class="mt-10 max-w-md mx-auto text-xs text-virtara-cream/50 text-center">
+      <p>Coin didapat dari setiap kartu: Common 1 • Rare 3 • Epic 10 • Legendary 25 • Mythic 75 • Staff 150 • Founder 500</p>
+    </div>
+  </div>
+
+  <!-- COLLECTION TAB -->
+  <div id="tab-collection" class="hidden">
+    <div class="text-center mb-6">
+      <p id="collectionSummary" class="text-virtara-gold font-semibold"></p>
+    </div>
+    <div id="collectionGrid" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-4"></div>
+  </div>
+
+  <!-- UPGRADE TAB -->
+  <div id="tab-upgrade" class="hidden">
+    <div id="upgradeGrid" class="grid sm:grid-cols-2 gap-5"></div>
+  </div>
+</main>
+
+<!-- Reveal modal -->
+<div id="revealModal" class="hidden vid-modal-backdrop">
+  <div class="text-center">
+    <div id="revealCardHolder" class="mx-auto mb-6"></div>
+    <button id="revealCloseBtn" class="px-8 py-3 rounded-lg bg-gradient-to-r from-virtara-bright-red to-virtara-deep-red font-semibold gold-glow">Lanjut</button>
+  </div>
+</div>
+
+<script src="js/arcade-core.js"></script>
+<script src="js/arcade-shell.js"></script>
+<script>
+  function refreshStats() {
+    const p = ArcadeCore.getPlayer();
+    if (!p) return;
+    document.getElementById('coinDisplay').textContent = p.coin;
+    document.getElementById('pullDisplay').textContent = p.pullCount;
+    document.getElementById('autoSpinRow').classList.toggle('hidden', p.upgrades.autoSpin <= 0);
+    ArcadeShell.renderNav('gacha.html');
+  }
+
+  function animSpeedMs() {
+    const p = ArcadeCore.getPlayer();
+    const lvl = p ? p.upgrades.animSpeed : 0;
+    return Math.max(250, 700 - lvl * 100);
+  }
+
+  function cardFace(card) {
+    const meta = ArcadeCore.RARITY_META[card.rarity];
+    const imgOrIcon = card.image
+      ? `<img src="${card.image}" class="w-full h-full object-cover" alt="${card.name}">`
+      : `<div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-virtara-deep-red to-virtara-dark"><i data-lucide="${card.icon || 'user'}" class="w-12 h-12 text-virtara-gold"></i></div>`;
+    return `
+      <div class="gacha-card rarity-${card.rarity} card-flip-enter w-56 h-80 flex flex-col">
+        <div class="h-2/3 overflow-hidden">${imgOrIcon}</div>
+        <div class="flex-1 p-3 flex flex-col justify-center items-center text-center">
+          <p class="font-display font-bold text-sm">${card.name}</p>
+          <span class="rarity-tag text-[10px] px-2 py-0.5 rounded-full mt-1 uppercase tracking-wider">${meta.label}</span>
+          <p class="text-[10px] text-virtara-cream/40 mt-1">${card.edition}</p>
+        </div>
+      </div>`;
+  }
+
+  function doSpin() {
+    const spinBtn = document.getElementById('spinBtn');
+    const pack = document.getElementById('spinPack');
+    spinBtn.disabled = true;
+    pack.classList.add('opening');
+    const p = ArcadeCore.getPlayer();
+    const card = ArcadeCore.pullCard(p.upgrades.luck);
+
+    setTimeout(() => {
+      pack.classList.remove('opening');
+      ArcadeCore.grantCard(card);
+      ArcadeCore.markGamePlayed('gacha');
+      showReveal(card);
+      refreshStats();
+      submitGachaLeaderboard();
+      spinBtn.disabled = false;
+      checkAchievementToasts();
+    }, animSpeedMs());
+  }
+
+  function bestRarityRank(player) {
+    let best = 0;
+    Object.keys(player.collection).forEach(cardId => {
+      const card = ArcadeCore.CARD_BY_ID[cardId];
+      if (!card) return;
+      const rank = ArcadeCore.RARITY_ORDER.indexOf(card.rarity);
+      if (rank > best) best = rank;
+    });
+    return best;
+  }
+
+  function submitGachaLeaderboard() {
+    const p = ArcadeCore.getPlayer();
+    const stats = ArcadeCore.collectionStats();
+    const rarityRank = bestRarityRank(p);
+    // Composite score for simple sort fallback: rarity dominates, then collection, then coin.
+    const score = rarityRank * 1000000 + stats.owned * 1000 + Math.min(p.coin, 999);
+    ArcadeCore.ArcadeDB.submitScore('gacha', {
+      uuid: p.uuid, username: p.username, score,
+      rarityRank, rarityLabel: ArcadeCore.RARITY_META[ArcadeCore.RARITY_ORDER[rarityRank]].label,
+      collection: stats.owned, coin: p.coin, pulls: p.pullCount,
+    });
+  }
+
+  function checkAchievementToasts() {
+    // Re-show toast for anything unlocked this action (grantCard already unlocked silently)
+    const p = ArcadeCore.getPlayer();
+    ['lucky_player','founder_hunter','collector','pull_100','pull_1000'].forEach(id => {
+      if (p.achievements.includes(id) && !window.__toastShown?.[id]) {
+        window.__toastShown = window.__toastShown || {};
+        // Only toast the very first time we detect it in this session
+      }
+    });
+  }
+
+  function showReveal(card) {
+    const modal = document.getElementById('revealModal');
+    document.getElementById('revealCardHolder').innerHTML = cardFace(card);
+    modal.classList.remove('hidden');
+    modal.style.display = 'flex';
+    lucide.createIcons();
+  }
+  document.getElementById('revealCloseBtn').addEventListener('click', () => {
+    document.getElementById('revealModal').style.display = 'none';
+    document.getElementById('revealModal').classList.add('hidden');
+  });
+
+  document.getElementById('spinBtn').addEventListener('click', doSpin);
+  document.getElementById('autoSpin5Btn').addEventListener('click', async () => {
+    for (let i = 0; i < 5; i++) {
+      await new Promise(res => setTimeout(res, 150));
+      doSpin();
+      await new Promise(res => setTimeout(res, animSpeedMs() + 200));
+    }
+  });
+
+  function renderCollection() {
+    const p = ArcadeCore.getPlayer();
+    const stats = ArcadeCore.collectionStats();
+    document.getElementById('collectionSummary').textContent = `${stats.owned}/${stats.total} kartu (${stats.percent}%)`;
+    const grid = document.getElementById('collectionGrid');
+    grid.innerHTML = ArcadeCore.CARD_DB.map(card => {
+      const owned = p.collection[card.id] > 0;
+      const meta = ArcadeCore.RARITY_META[card.rarity];
+      const imgOrIcon = card.image
+        ? `<img src="${card.image}" class="w-full h-full object-cover ${owned ? '' : 'grayscale blur-[2px]'}" alt="">`
+        : `<div class="w-full h-full flex items-center justify-center"><i data-lucide="${card.icon || 'user'}" class="w-8 h-8 text-virtara-gold/60"></i></div>`;
+      return `
+        <div class="gacha-card rarity-${card.rarity} h-56 flex flex-col ${owned ? '' : 'opacity-50'}">
+          <div class="h-2/3 overflow-hidden">${imgOrIcon}</div>
+          <div class="flex-1 p-2 flex flex-col justify-center items-center text-center">
+            <p class="font-semibold text-xs">${owned ? card.name : '???'}</p>
+            <span class="rarity-tag text-[9px] px-1.5 py-0.5 rounded-full mt-1 uppercase">${meta.label}</span>
+            ${owned ? `<p class="text-[9px] text-virtara-cream/40 mt-0.5">x${p.collection[card.id]}</p>` : ''}
+          </div>
+        </div>`;
+    }).join('');
+    lucide.createIcons();
+  }
+
+  function renderUpgrades() {
+    const p = ArcadeCore.getPlayer();
+    const grid = document.getElementById('upgradeGrid');
+    grid.innerHTML = Object.entries(ArcadeCore.UPGRADE_META).map(([key, meta]) => {
+      const level = p.upgrades[key];
+      const cost = ArcadeCore.upgradeCost(key);
+      return `
+        <div class="arcade-card p-5 flex items-center gap-4">
+          <div class="w-12 h-12 rounded-full bg-virtara-gold/10 flex items-center justify-center shrink-0">
+            <i data-lucide="${meta.icon}" class="w-6 h-6 text-virtara-gold"></i>
+          </div>
+          <div class="flex-1">
+            <p class="font-semibold text-sm">${meta.label} <span class="text-virtara-cream/40 text-xs">Lv.${level}</span></p>
+            <p class="text-xs text-virtara-cream/50 mb-2">${meta.desc}</p>
+            <button data-up="${key}" class="up-btn text-xs px-4 py-1.5 rounded-lg bg-virtara-gold/15 hover:bg-virtara-gold/25 transition-colors">Upgrade (${cost} Coin)</button>
+          </div>
+        </div>`;
+    }).join('');
+    grid.querySelectorAll('.up-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const res = ArcadeCore.buyUpgrade(btn.dataset.up);
+        if (!res.ok) { alert('Coin tidak cukup.'); return; }
+        refreshStats();
+        renderUpgrades();
+      });
+    });
+  }
+
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      ['spin','collection','upgrade'].forEach(t => document.getElementById('tab-' + t).classList.add('hidden'));
+      document.getElementById('tab-' + btn.dataset.tab).classList.remove('hidden');
+      if (btn.dataset.tab === 'collection') renderCollection();
+      if (btn.dataset.tab === 'upgrade') renderUpgrades();
+    });
+  });
+
+  ArcadeShell.init({
+    activePath: 'gacha.html',
+    onReady: () => { refreshStats(); lucide.createIcons(); }
+  });
+</script>
+</body>
+</html>
