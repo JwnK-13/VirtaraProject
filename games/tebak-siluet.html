@@ -40,6 +40,9 @@
   <p id="feedbackText" class="text-sm h-5"></p>
 </main>
 
+<script>window.__firebaseReady = new Promise(res => { window.__resolveFirebaseReady = res; });</script>
+<script type="module" src="js/firebase-config.js"></script>
+<script type="module" src="js/firebase-db.js"></script>
 <script src="js/arcade-core.js"></script>
 <script src="js/arcade-shell.js"></script>
 <script>
@@ -103,6 +106,7 @@
     document.getElementById('scoreDisplay').textContent = score;
     document.getElementById('streakDisplay').textContent = streak;
 
+    ArcadeCore.updateStat('tebakSiluet', { lastScore: score, bestStreak });
     const p = ArcadeCore.getPlayer();
     ArcadeCore.ArcadeDB.submitScore('tebak-siluet', { uuid: p.uuid, username: p.username, score, bestStreak });
     ArcadeShell.renderNav('tebak-siluet.html');

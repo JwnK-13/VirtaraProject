@@ -65,6 +65,9 @@
 
 </main>
 
+<script>window.__firebaseReady = new Promise(res => { window.__resolveFirebaseReady = res; });</script>
+<script type="module" src="js/firebase-config.js"></script>
+<script type="module" src="js/firebase-db.js"></script>
 <script src="js/arcade-core.js"></script>
 <script src="js/arcade-shell.js"></script>
 <script src="js/quiz-data.js"></script>
@@ -162,6 +165,10 @@
     }
     ArcadeShell.unlockWithToast('quiz_master');
 
+    ArcadeCore.updateStat('quiz', {
+      lastScore: score, lastCategory: currentCategory,
+      playCount: ((ArcadeCore.getPlayer().stats?.quiz?.playCount) || 0) + 1,
+    });
     const p = ArcadeCore.getPlayer();
     ArcadeCore.ArcadeDB.submitScore('quiz', { uuid: p.uuid, username: p.username, score, category: currentCategory });
     ArcadeShell.renderNav('quiz.html');

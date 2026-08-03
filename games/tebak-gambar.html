@@ -44,6 +44,9 @@
   </div>
 </main>
 
+<script>window.__firebaseReady = new Promise(res => { window.__resolveFirebaseReady = res; });</script>
+<script type="module" src="js/firebase-config.js"></script>
+<script type="module" src="js/firebase-db.js"></script>
 <script src="js/arcade-core.js"></script>
 <script src="js/arcade-shell.js"></script>
 <script>
@@ -116,6 +119,10 @@
       if (attempt === 0) ArcadeShell.unlockWithToast('guess_master');
     }
 
+    ArcadeCore.updateStat('tebakGambar', {
+      lastScore: totalScore, lastCorrect: correct,
+      playCount: ((ArcadeCore.getPlayer().stats?.tebakGambar?.playCount) || 0) + 1,
+    });
     const p = ArcadeCore.getPlayer();
     ArcadeCore.ArcadeDB.submitScore('tebak-gambar', { uuid: p.uuid, username: p.username, score: totalScore });
     ArcadeShell.renderNav('tebak-gambar.html');

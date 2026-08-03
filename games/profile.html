@@ -76,6 +76,9 @@
 
 </main>
 
+<script>window.__firebaseReady = new Promise(res => { window.__resolveFirebaseReady = res; });</script>
+<script type="module" src="js/firebase-config.js"></script>
+<script type="module" src="js/firebase-db.js"></script>
 <script src="js/arcade-core.js"></script>
 <script src="js/arcade-shell.js"></script>
 <script>
@@ -128,10 +131,18 @@
     lucide.createIcons();
   }
 
-  document.getElementById('saveUsernameBtn').addEventListener('click', () => {
+  document.getElementById('saveUsernameBtn').addEventListener('click', async () => {
     const val = document.getElementById('usernameInput').value.trim();
     if (val.length < 3) { alert('Username minimal 3 karakter.'); return; }
-    ArcadeCore.renamePlayer(val);
+    const btn = document.getElementById('saveUsernameBtn');
+    btn.disabled = true;
+    const res = await ArcadeCore.renamePlayer(val);
+    btn.disabled = false;
+    if (!res.ok) {
+      if (res.reason === 'TAKEN') alert('Username sudah digunakan.\nSilakan gunakan username lain.');
+      else alert('Gagal menyimpan username. Coba lagi.');
+      return;
+    }
     render();
     ArcadeShell.renderNav('profile.html');
   });

@@ -89,6 +89,9 @@
   </div>
 </section>
 
+<script>window.__firebaseReady = new Promise(res => { window.__resolveFirebaseReady = res; });</script>
+<script type="module" src="js/firebase-config.js"></script>
+<script type="module" src="js/firebase-db.js"></script>
 <script src="js/arcade-core.js"></script>
 <script src="js/arcade-shell.js"></script>
 <script>
@@ -124,7 +127,7 @@
   function renderDaily() {
     const btn = document.getElementById('dailyBtn');
     const desc = document.getElementById('dailyDesc');
-    if (!ArcadeCore.hasPlayer()) return;
+    if (!ArcadeCore.getPlayer()) return;
     const can = ArcadeCore.canClaimDaily();
     btn.disabled = !can;
     btn.textContent = can ? 'Klaim Sekarang' : 'Sudah Diklaim';

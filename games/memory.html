@@ -51,6 +51,9 @@
   </div>
 </main>
 
+<script>window.__firebaseReady = new Promise(res => { window.__resolveFirebaseReady = res; });</script>
+<script type="module" src="js/firebase-config.js"></script>
+<script type="module" src="js/firebase-db.js"></script>
 <script src="js/arcade-core.js"></script>
 <script src="js/arcade-shell.js"></script>
 <script>
@@ -166,6 +169,7 @@
     ArcadeCore.addCoin(Math.round(score / 50));
     if (difficulty === 'hard') ArcadeShell.unlockWithToast('memory_master');
 
+    ArcadeCore.updateStat('memory', { lastScore: score, lastSeconds: seconds, lastMoves: moves, lastDifficulty: difficulty });
     const p = ArcadeCore.getPlayer();
     ArcadeCore.ArcadeDB.submitScore('memory', { uuid: p.uuid, username: p.username, score, seconds, moves, difficulty });
     ArcadeShell.renderNav('memory.html');
