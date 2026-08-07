@@ -25,8 +25,7 @@
 
 <main class="max-w-3xl mx-auto px-4 py-10">
   <h1 class="font-display text-3xl md:text-4xl font-bold merdeka-gradient-text mb-2 text-center">🏆 Leaderboard</h1>
-  <p class="text-virtara-cream/70 text-center mb-4">Top pemain Virtara Arcade.</p>
-  <p class="text-xs text-virtara-cream/40 text-center mb-8 max-w-md mx-auto">Catatan: leaderboard saat ini tersimpan lokal per-browser. Leaderboard global lintas pengunjung akan aktif setelah backend (Supabase/Firebase) terhubung.</p>
+  <p class="text-virtara-cream/70 text-center mb-4">Top pemain Virtara Arcade — data global dari semua pemain.</p>
 
   <div class="flex flex-wrap justify-center gap-2 mb-8 border-b border-virtara-gold/15">
     <button data-g="quiz" class="gtab px-4 py-3 text-sm font-medium border-b-2 border-transparent">Quiz</button>
@@ -46,9 +45,10 @@
 <script src="js/arcade-shell.js"></script>
 <script>
   function rowShell(rank, username, right, sub) {
+    const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : '';
     return `
       <div class="arcade-card px-4 py-3 flex items-center gap-4">
-        <div class="w-8 text-center font-display font-bold ${rank <= 3 ? 'text-virtara-gold' : 'text-virtara-cream/50'}">${rank}</div>
+        <div class="w-10 text-center font-display font-bold ${rank <= 3 ? 'text-virtara-gold' : 'text-virtara-cream/50'}">${medal || rank}</div>
         <div class="w-9 h-9 rounded-full bg-gradient-to-br from-virtara-bright-red to-virtara-gold flex items-center justify-center font-bold shrink-0">${username.charAt(0).toUpperCase()}</div>
         <div class="flex-1 min-w-0">
           <p class="font-semibold text-sm truncate">${username}</p>
@@ -64,13 +64,15 @@
       if (b.rarityRank !== a.rarityRank) return b.rarityRank - a.rarityRank;
       if (b.collection !== a.collection) return b.collection - a.collection;
       if (b.coin !== a.coin) return b.coin - a.coin;
-      return a.pulls - b.pulls; // fewer pulls wins tie
+      return a.pulls - b.pulls;
     });
-    return list.map((e, i) => rowShell(i + 1, e.username, e.rarityLabel, `${e.collection} koleksi • ${e.coin} coin • ${e.pulls} pull`)).join('');
+    if (list.length === 0) return '<p class="text-center text-virtara-cream/40 text-sm py-8">Belum ada skor. Jadilah yang pertama!</p>';
+    return list.map((e, i) => rowShell(i + 1, e.username, e.rarityLabel || e.rarityRank || '--', `${e.collection || 0} koleksi • ${e.coin || 0} coin • ${e.pulls || 0} pull`)).join('');
   }
 
   async function renderStandardBoard(gameId, subFn) {
     const list = await ArcadeCore.ArcadeDB.getLeaderboard(gameId, 100);
+    if (list.length === 0) return '<p class="text-center text-virtara-cream/40 text-sm py-8">Belum ada skor. Jadilah yang pertama!</p>';
     return list.map((e, i) => rowShell(i + 1, e.username, e.score + ' poin', subFn ? subFn(e) : new Date(e.date).toLocaleDateString('id-ID'))).join('');
   }
 
@@ -78,10 +80,15 @@
     const holder = document.getElementById('lbList');
     holder.innerHTML = '<p class="text-center text-virtara-cream/40 text-sm py-8">Memuat...</p>';
     let html = '';
-    if (gameId === 'gacha') html = await renderGachaBoard();
-    else if (gameId === 'memory') html = await renderStandardBoard('memory', e => `${e.difficulty} • ${e.seconds}s • ${e.moves} langkah`);
-    else if (gameId === 'tebak-siluet') html = await renderStandardBoard('tebak-siluet', e => `Best streak: ${e.bestStreak || 0}`);
-    else html = await renderStandardBoard(gameId);
+    try {
+      if (gameId === 'gacha') html = await renderGachaBoard();
+      else if (gameId === 'memory') html = await renderStandardBoard('memory', e => `${e.difficulty || 'medium'} • ${e.seconds || 0}s • ${e.moves || 0} langkah`);
+      else if (gameId === 'tebak-siluet') html = await renderStandardBoard('tebak-siluet', e => `Best streak: ${e.bestStreak || 0}`);
+      else html = await renderStandardBoard(gameId);
+    } catch (err) {
+      console.warn('Leaderboard render error:', err);
+      html = '<p class="text-center text-virtara-cream/40 text-sm py-8">Gagal memuat leaderboard. Silakan coba lagi nanti.</p>';
+    }
     holder.innerHTML = html || '<p class="text-center text-virtara-cream/40 text-sm py-8">Belum ada skor. Jadilah yang pertama!</p>';
   }
 

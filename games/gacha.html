@@ -152,18 +152,27 @@
   }
 
   function submitGachaLeaderboard() {
-    const p = ArcadeCore.getPlayer();
-    const stats = ArcadeCore.collectionStats();
-    const rarityRank = bestRarityRank(p);
-    ArcadeCore.updateStat('gacha', { pullCount: p.pullCount, bestCard: p.bestCard, collectionOwned: stats.owned });
-    // Composite score for simple sort fallback: rarity dominates, then collection, then coin.
-    const score = rarityRank * 1000000 + stats.owned * 1000 + Math.min(p.coin, 999);
-    ArcadeCore.ArcadeDB.submitScore('gacha', {
-      uuid: p.uuid, username: p.username, score,
-      rarityRank, rarityLabel: ArcadeCore.RARITY_META[ArcadeCore.RARITY_ORDER[rarityRank]].label,
-      collection: stats.owned, coin: p.coin, pulls: p.pullCount,
-    });
-  }
+  const p = ArcadeCore.getPlayer();
+  if (!p) return;
+  const stats = ArcadeCore.collectionStats();
+  const rarityRank = bestRarityRank(p);
+  
+  // Update stats using the new updateStat function
+  ArcadeCore.updateStat('gacha', { 
+    pullCount: p.pullCount, 
+    bestCard: p.bestCard, 
+    collectionOwned: stats.owned 
+  });
+  
+  // Composite score for simple sort fallback: rarity dominates, then collection, then coin.
+  const score = rarityRank * 1000000 + stats.owned * 1000 + Math.min(p.coin, 999);
+  ArcadeCore.ArcadeDB.submitScore('gacha', {
+    uuid: p.uuid, username: p.username, score,
+    rarityRank, rarityLabel: ArcadeCore.RARITY_META[ArcadeCore.RARITY_ORDER[rarityRank]].label,
+    collection: stats.owned, coin: p.coin, pulls: p.pullCount,
+  });
+}
+
 
   function checkAchievementToasts() {
     // Re-show toast for anything unlocked this action (grantCard already unlocked silently)

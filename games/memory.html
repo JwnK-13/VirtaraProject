@@ -159,21 +159,35 @@
     }
   }
 
-  function finishGame() {
-    clearInterval(timerInterval);
-    ArcadeCore.markGamePlayed('memory');
-    const score = Math.max(50, 2000 - seconds * 4 - moves * 8);
-    document.getElementById('winArea').classList.remove('hidden');
-    document.getElementById('winDesc').textContent = `Waktu: ${document.getElementById('timerDisplay').textContent} • Langkah: ${moves} • Skor: ${score}`;
-    ArcadeCore.addXp(Math.round(score / 10));
-    ArcadeCore.addCoin(Math.round(score / 50));
-    if (difficulty === 'hard') ArcadeShell.unlockWithToast('memory_master');
+ function finishGame() {
+  clearInterval(timerInterval);
+  ArcadeCore.markGamePlayed('memory');
+  const score = Math.max(50, 2000 - seconds * 4 - moves * 8);
+  document.getElementById('winArea').classList.remove('hidden');
+  document.getElementById('winDesc').textContent = `Waktu: ${document.getElementById('timerDisplay').textContent} • Langkah: ${moves} • Skor: ${score}`;
+  ArcadeCore.addXp(Math.round(score / 10));
+  ArcadeCore.addCoin(Math.round(score / 50));
+  if (difficulty === 'hard') ArcadeShell.unlockWithToast('memory_master');
 
-    ArcadeCore.updateStat('memory', { lastScore: score, lastSeconds: seconds, lastMoves: moves, lastDifficulty: difficulty });
-    const p = ArcadeCore.getPlayer();
-    ArcadeCore.ArcadeDB.submitScore('memory', { uuid: p.uuid, username: p.username, score, seconds, moves, difficulty });
-    ArcadeShell.renderNav('memory.html');
-  }
+  // Use new updateStat function
+  ArcadeCore.updateStat('memory', { 
+    lastScore: score, 
+    lastSeconds: seconds, 
+    lastMoves: moves, 
+    lastDifficulty: difficulty 
+  });
+  
+  const p = ArcadeCore.getPlayer();
+  ArcadeCore.ArcadeDB.submitScore('memory', { 
+    uuid: p.uuid, 
+    username: p.username, 
+    score, 
+    seconds, 
+    moves, 
+    difficulty 
+  });
+  ArcadeShell.renderNav('memory.html');
+}
 
   document.querySelectorAll('.diff-btn').forEach(b => b.addEventListener('click', () => setDifficulty(b.dataset.diff)));
   document.getElementById('playAgainMemBtn').addEventListener('click', startGame);

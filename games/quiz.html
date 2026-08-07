@@ -141,38 +141,47 @@
   }
 
   function finishQuiz() {
-    document.getElementById('questionView').classList.add('hidden');
-    document.getElementById('resultView').classList.remove('hidden');
-    const total = QUIZ_DATA[currentCategory].questions.length;
-    document.getElementById('resultScore').textContent = `Skor akhir: ${score} poin`;
-    document.getElementById('resultCorrect').textContent = score;
-    document.getElementById('resultWrong').textContent = total - score;
-    document.getElementById('reviewList').innerHTML = review.map(r => `
-      <div class="flex items-start gap-2 text-sm p-2 rounded ${r.correct ? 'bg-green-400/5' : 'bg-virtara-bright-red/5'}">
-        <i data-lucide="${r.correct ? 'check' : 'x'}" class="w-4 h-4 mt-0.5 shrink-0 ${r.correct ? 'text-green-400' : 'text-virtara-bright-red'}"></i>
-        <div>
-          <p class="text-virtara-cream/80">${r.q}</p>
-          ${r.correct ? '' : `<p class="text-xs text-virtara-cream/50">Jawabanmu: ${r.chosen} • Benar: ${r.correctText}</p>`}
-        </div>
-      </div>`).join('');
-    lucide.createIcons();
+  document.getElementById('questionView').classList.add('hidden');
+  document.getElementById('resultView').classList.remove('hidden');
+  const total = QUIZ_DATA[currentCategory].questions.length;
+  document.getElementById('resultScore').textContent = `Skor akhir: ${score} poin`;
+  document.getElementById('resultCorrect').textContent = score;
+  document.getElementById('resultWrong').textContent = total - score;
+  document.getElementById('reviewList').innerHTML = review.map(r => `
+    <div class="flex items-start gap-2 text-sm p-2 rounded ${r.correct ? 'bg-green-400/5' : 'bg-virtara-bright-red/5'}">
+      <i data-lucide="${r.correct ? 'check' : 'x'}" class="w-4 h-4 mt-0.5 shrink-0 ${r.correct ? 'text-green-400' : 'text-virtara-bright-red'}"></i>
+      <div>
+        <p class="text-virtara-cream/80">${r.q}</p>
+        ${r.correct ? '' : `<p class="text-xs text-virtara-cream/50">Jawabanmu: ${r.chosen} • Benar: ${r.correctText}</p>`}
+      </div>
+    </div>`).join('');
+  lucide.createIcons();
 
-    ArcadeCore.addXp(score * 5);
-    ArcadeCore.addCoin(score);
-    if (score === total) {
-      ArcadeShell.unlockWithToast('perfect_quiz');
-      if (currentCategory === 'kemerdekaan') ArcadeShell.unlockWithToast('patriot');
-    }
-    ArcadeShell.unlockWithToast('quiz_master');
-
-    ArcadeCore.updateStat('quiz', {
-      lastScore: score, lastCategory: currentCategory,
-      playCount: ((ArcadeCore.getPlayer().stats?.quiz?.playCount) || 0) + 1,
-    });
-    const p = ArcadeCore.getPlayer();
-    ArcadeCore.ArcadeDB.submitScore('quiz', { uuid: p.uuid, username: p.username, score, category: currentCategory });
-    ArcadeShell.renderNav('quiz.html');
+  ArcadeCore.addXp(score * 5);
+  ArcadeCore.addCoin(score);
+  
+  // Update stats with new updateStat function
+  ArcadeCore.updateStat('quiz', {
+    lastScore: score, 
+    lastCategory: currentCategory,
+    playCount: ((ArcadeCore.getPlayer()?.stats?.quiz?.playCount) || 0) + 1,
+  });
+  
+  if (score === total) {
+    ArcadeShell.unlockWithToast('perfect_quiz');
+    if (currentCategory === 'kemerdekaan') ArcadeShell.unlockWithToast('patriot');
   }
+  ArcadeShell.unlockWithToast('quiz_master');
+
+  const p = ArcadeCore.getPlayer();
+  ArcadeCore.ArcadeDB.submitScore('quiz', { 
+    uuid: p.uuid, 
+    username: p.username, 
+    score, 
+    category: currentCategory 
+  });
+  ArcadeShell.renderNav('quiz.html');
+}
 
   document.getElementById('playAgainBtn').addEventListener('click', () => {
     document.getElementById('resultView').classList.add('hidden');

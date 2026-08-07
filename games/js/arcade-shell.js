@@ -73,9 +73,35 @@ const ArcadeShell = (() => {
     const btn = backdrop.querySelector('#vidStartBtn');
     input.focus();
 
-    function submit() {
+    async function submit() {
       const val = input.value.trim();
       if (val.length < 3) { err.textContent = 'Username minimal 3 karakter.'; return; }
+      try {
+        // Try Firebase first
+        if (window.FirebaseDB) {
+          const result = await window.FirebaseDB.createAccount(val);
+          // Create local player from Firebase result
+          const player = ArcadeCore.defaultPlayer ? 
+            ArcadeCore.defaultPlayer(result.uuid, result.username) : 
+            { uuid: result.uuid, username: result.username, ...result.player };
+          // Copy data from result.player
+          const localPlayer = ArcadeCore.getPlayer() || {};
+          Object.assign(localPlayer, result.player);
+          localPlayer.uuid = result.uuid;
+          localPlayer.username = result.username;
+          ArcadeCore.savePlayer(localPlayer);
+          backdrop.remove();
+          onDone();
+          return;
+        }
+      } catch (e) {
+        if (e.message === 'USERNAME_TAKEN') {
+          err.textContent = 'Username sudah digunakan. Silakan pilih username lain.';
+          return;
+        }
+        console.warn('Firebase create account failed, using localStorage:', e);
+      }
+      // Fallback: localStorage only
       ArcadeCore.createPlayer(val);
       backdrop.remove();
       onDone();

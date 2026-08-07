@@ -86,33 +86,43 @@
   }
 
   function guess(cardId) {
-    if (firstPlay) { ArcadeCore.markGamePlayed('tebak-siluet'); firstPlay = false; }
-    const feedback = document.getElementById('feedbackText');
-    if (cardId === target.id) {
-      streak += 1;
-      bestStreak = Math.max(bestStreak, streak);
-      const bonus = Math.floor(streak / 3);
-      const gained = 1 + bonus;
-      score += gained;
-      feedback.textContent = `Benar! +${gained} poin${bonus > 0 ? ' (termasuk bonus streak)' : ''}`;
-      feedback.className = 'text-sm h-5 text-green-400';
-      ArcadeCore.addXp(gained * 2);
-      ArcadeCore.addCoin(gained);
-    } else {
-      streak = 0;
-      feedback.textContent = `Salah! Jawabannya ${target.name}.`;
-      feedback.className = 'text-sm h-5 text-virtara-bright-red';
-    }
-    document.getElementById('scoreDisplay').textContent = score;
-    document.getElementById('streakDisplay').textContent = streak;
-
-    ArcadeCore.updateStat('tebakSiluet', { lastScore: score, bestStreak });
-    const p = ArcadeCore.getPlayer();
-    ArcadeCore.ArcadeDB.submitScore('tebak-siluet', { uuid: p.uuid, username: p.username, score, bestStreak });
-    ArcadeShell.renderNav('tebak-siluet.html');
-
-    setTimeout(newRound, 900);
+  if (firstPlay) { ArcadeCore.markGamePlayed('tebak-siluet'); firstPlay = false; }
+  const feedback = document.getElementById('feedbackText');
+  if (cardId === target.id) {
+    streak += 1;
+    bestStreak = Math.max(bestStreak, streak);
+    const bonus = Math.floor(streak / 3);
+    const gained = 1 + bonus;
+    score += gained;
+    feedback.textContent = `Benar! +${gained} poin${bonus > 0 ? ' (termasuk bonus streak)' : ''}`;
+    feedback.className = 'text-sm h-5 text-green-400';
+    ArcadeCore.addXp(gained * 2);
+    ArcadeCore.addCoin(gained);
+  } else {
+    streak = 0;
+    feedback.textContent = `Salah! Jawabannya ${target.name}.`;
+    feedback.className = 'text-sm h-5 text-virtara-bright-red';
   }
+  document.getElementById('scoreDisplay').textContent = score;
+  document.getElementById('streakDisplay').textContent = streak;
+
+  // Use new updateStat function
+  ArcadeCore.updateStat('tebakSiluet', { 
+    lastScore: score, 
+    bestStreak 
+  });
+  
+  const p = ArcadeCore.getPlayer();
+  ArcadeCore.ArcadeDB.submitScore('tebak-siluet', { 
+    uuid: p.uuid, 
+    username: p.username, 
+    score, 
+    bestStreak 
+  });
+  ArcadeShell.renderNav('tebak-siluet.html');
+
+  setTimeout(newRound, 900);
+}
 
   ArcadeShell.init({
     activePath: 'tebak-siluet.html',

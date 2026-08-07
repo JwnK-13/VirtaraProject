@@ -4,19 +4,25 @@
 
    BACKEND NOTE
    -------------
-   Leaderboards are currently stored in localStorage on ArcadeDB, namespaced
-   per-browser (there is no server yet, so a leaderboard only shows scores
-   set from this browser). Every read/write to leaderboard data goes through
-   the ArcadeDB object below so this can be swapped for Supabase/Firebase
-   later WITHOUT touching any game page: just replace the body of the
-   functions in ArcadeDB with real API calls (they're all already async).
+   Leaderboards are stored in Firebase Firestore for global leaderboards.
+   Player data is also stored in Firestore with localStorage as fallback cache.
    ========================================================================= */
 
 const ArcadeCore = (() => {
 
   const LS_PLAYER = 'virtara_arcade_player';
-  const LS_LB_PREFIX = 'virtara_arcade_lb_'; // + gameId
-  const LS_COLLECTION_SEEN = 'virtara_arcade_collection';
+  const LS_LB_PREFIX = 'virtara_arcade_lb_'; // + gameId - fallback only
+
+  // FirebaseDB will be injected from firebase-db.js
+  let _firebaseDB = null;
+
+  function setFirebaseDB(db) {
+    _firebaseDB = db;
+  }
+
+  function getFirebaseDB() {
+    return _firebaseDB;
+  }
 
   /* ---------------------------------------------------------------------
      UUID
@@ -50,11 +56,6 @@ const ArcadeCore = (() => {
 
   /* ---------------------------------------------------------------------
      CARD DATABASE
-     Semua kartu diambil langsung dari foto di folder games/imgcard/<Rarity>/.
-     Nama kartu = nama file foto (tanpa ekstensi). Rarity kartu ditentukan
-     oleh sub-folder tempat fotonya berada.
-     Founder = belum ada foto resminya, jadi tetap pakai lencana placeholder
-     sampai asetnya tersedia.
   --------------------------------------------------------------------- */
   const RARITY_ORDER = ['common', 'uncommon', 'rare', 'epic', 'legendary', 'mythic', 'staff', 'founder'];
 
@@ -69,7 +70,6 @@ const ArcadeCore = (() => {
     founder:   { label: 'Founder',   color: '#D4AF37', coin: 500, weight: 0.1  },
   };
 
-  // Nama file foto persis seperti di games/imgcard/<folder>/ (termasuk ekstensi).
   const CARD_ASSETS = {
     common: [
       'Elya Rosabelle.jpg', 'Faraby Nichella.jpg', 'Iana Muffin.jpg', 'Key Oriesa.jpg',
@@ -101,7 +101,6 @@ const ArcadeCore = (() => {
     ],
   };
 
-  // Nama folder di disk (case-sensitive, harus sama persis dengan games/imgcard/*)
   const RARITY_FOLDER = {
     common: 'common', uncommon: 'uncommon', rare: 'rare',
     epic: 'Epic', legendary: 'Legendary', mythic: 'Mythic', staff: 'Staff',
@@ -142,8 +141,10 @@ const ArcadeCore = (() => {
   const CARD_BY_ID = Object.fromEntries(CARD_DB.map(c => [c.id, c]));
 
   /* ---------------------------------------------------------------------
-     PLAYER PROFILE
+     PLAYER PROFILE - Uses Firebase with localStorage cache
   --------------------------------------------------------------------- */
+  let _cachedPlayer = null;
+
   function defaultPlayer(uuid, username) {
     return {
       uuid,
@@ -156,41 +157,63 @@ const ArcadeCore = (() => {
       gamesPlayed: [],
       collection: {},
       pullCount: 0,
+      bestCard: null,
       upgrades: { luck: 0, autoSpin: 0, animSpeed: 0, dailyBonus: 0 },
       lastDailyClaim: null,
       favoriteGame: null,
+      favoriteCard: null,
       bestRank: null,
+      stats: { quiz: {}, gacha: {}, tebakGambar: {}, memory: {}, tebakSiluet: {} },
       joinDate: new Date().toISOString(),
+      lastLogin: new Date().toISOString(),
     };
   }
 
   function hasPlayer() {
-    return !!localStorage.getItem(LS_PLAYER);
+    return !!localStorage.getItem(LS_PLAYER) || !!_cachedPlayer;
   }
 
   function getPlayer() {
+    if (_cachedPlayer) return _cachedPlayer;
     const raw = localStorage.getItem(LS_PLAYER);
     if (!raw) return null;
-    try { return JSON.parse(raw); } catch (e) { return null; }
+    try {
+      _cachedPlayer = JSON.parse(raw);
+      return _cachedPlayer;
+    } catch (e) { return null; }
   }
 
   function savePlayer(player) {
+    _cachedPlayer = player;
     localStorage.setItem(LS_PLAYER, JSON.stringify(player));
+    // Also save to Firebase if available
+    if (_firebaseDB && player.uuid) {
+      _firebaseDB.savePlayer(player.uuid, player).catch(err => {
+        console.warn('Failed to save player to Firebase:', err);
+      });
+    }
     return player;
   }
 
   function createPlayer(username) {
     const uuid = uuidv4();
     const player = defaultPlayer(uuid, username.trim().slice(0, 24));
-    savePlayer(player);
-    return player;
+    return savePlayer(player);
   }
 
   function renamePlayer(newUsername) {
     const p = getPlayer();
-    if (!p) return null;
+    if (!p) return { ok: false, reason: 'NO_PLAYER' };
+    const oldUsername = p.username;
     p.username = newUsername.trim().slice(0, 24);
-    return savePlayer(p);
+    savePlayer(p);
+    // Also update username index in Firebase
+    if (_firebaseDB) {
+      _firebaseDB.renameUsername(p.uuid, oldUsername, p.username).catch(err => {
+        console.warn('Failed to rename username in Firebase:', err);
+      });
+    }
+    return { ok: true };
   }
 
   /* ---------------------------------------------------------------------
@@ -235,6 +258,20 @@ const ArcadeCore = (() => {
   }
 
   /* ---------------------------------------------------------------------
+     UPDATE STAT - NEW FUNCTION
+  --------------------------------------------------------------------- */
+  function updateStat(gameId, data) {
+    const p = getPlayer();
+    if (!p) return null;
+    // Ensure stats object exists
+    if (!p.stats) p.stats = {};
+    if (!p.stats[gameId]) p.stats[gameId] = {};
+    Object.assign(p.stats[gameId], data);
+    savePlayer(p);
+    return p;
+  }
+
+  /* ---------------------------------------------------------------------
      ACHIEVEMENTS / BADGES
   --------------------------------------------------------------------- */
   function unlockAchievement(id) {
@@ -259,7 +296,6 @@ const ArcadeCore = (() => {
     let total = 0;
     RARITY_ORDER.forEach(r => {
       let w = RARITY_META[r].weight;
-      // Luck upgrade nudges weight away from common/uncommon toward rare+.
       if (luckLevel > 0) {
         const bump = luckLevel * 0.15;
         if (r === 'common') w = Math.max(5, w - bump * 4);
@@ -290,6 +326,10 @@ const ArcadeCore = (() => {
     p.collection[card.id] = (p.collection[card.id] || 0) + 1;
     p.pullCount += 1;
     p.coin += RARITY_META[card.rarity].coin;
+    // Track best card by rarity
+    const cardRank = RARITY_ORDER.indexOf(card.rarity);
+    const currentBest = p.bestCard ? RARITY_ORDER.indexOf(p.bestCard) : -1;
+    if (cardRank > currentBest) p.bestCard = card.rarity;
     savePlayer(p);
 
     if (card.rarity === 'legendary' || card.rarity === 'mythic' || card.rarity === 'staff' || card.rarity === 'founder') {
@@ -364,10 +404,20 @@ const ArcadeCore = (() => {
   }
 
   /* ---------------------------------------------------------------------
-     LEADERBOARD (localStorage now, swappable for real backend later)
+     LEADERBOARD - Uses Firebase with localStorage fallback
   --------------------------------------------------------------------- */
   const ArcadeDB = {
     async submitScore(gameId, entry) {
+      // Try Firebase first
+      if (_firebaseDB) {
+        try {
+          await _firebaseDB.submitScore(gameId, entry);
+          return entry;
+        } catch (err) {
+          console.warn('Firebase submit failed, using localStorage fallback:', err);
+        }
+      }
+      // Fallback to localStorage
       const key = LS_LB_PREFIX + gameId;
       let list = [];
       try { list = JSON.parse(localStorage.getItem(key) || '[]'); } catch (e) { list = []; }
@@ -381,23 +431,110 @@ const ArcadeCore = (() => {
       localStorage.setItem(key, JSON.stringify(list));
       return record;
     },
+
     async getLeaderboard(gameId, limit = 100) {
+      // Try Firebase first
+      if (_firebaseDB) {
+        try {
+          const results = await _firebaseDB.getLeaderboard(gameId, limit);
+          if (results && results.length > 0) return results;
+        } catch (err) {
+          console.warn('Firebase leaderboard read failed, using localStorage fallback:', err);
+        }
+      }
+      // Fallback to localStorage
       const key = LS_LB_PREFIX + gameId;
       let list = [];
       try { list = JSON.parse(localStorage.getItem(key) || '[]'); } catch (e) { list = []; }
       list.sort((a, b) => b.score - a.score);
       return list.slice(0, limit);
-    },
+    }
   };
 
+  /* ---------------------------------------------------------------------
+     FIREBASE ACCOUNT FUNCTIONS
+  --------------------------------------------------------------------- */
+  async function firebaseCreateAccount(username) {
+    if (!_firebaseDB) throw new Error('FirebaseDB not initialized');
+    const result = await _firebaseDB.createAccount(username);
+    // Create local player from result
+    const player = defaultPlayer(result.uuid, result.username);
+    Object.assign(player, result.player);
+    savePlayer(player);
+    return result;
+  }
+
+  async function firebaseLogin(username, code) {
+    if (!_firebaseDB) throw new Error('FirebaseDB not initialized');
+    const result = await _firebaseDB.login(username, code);
+    // Update local player from result
+    const existing = getPlayer();
+    if (existing && existing.uuid === result.uuid) {
+      Object.assign(existing, result.player);
+      savePlayer(existing);
+    } else {
+      const player = defaultPlayer(result.uuid, result.player.username);
+      Object.assign(player, result.player);
+      savePlayer(player);
+    }
+    return result;
+  }
+
+  async function loadFromFirebase(uuid) {
+    if (!_firebaseDB) return null;
+    try {
+      const data = await _firebaseDB.loadPlayer(uuid);
+      if (data) {
+        // Merge with local player if exists
+        const local = getPlayer();
+        if (local && local.uuid === uuid) {
+          Object.assign(local, data);
+          savePlayer(local);
+        } else {
+          const player = defaultPlayer(uuid, data.username);
+          Object.assign(player, data);
+          savePlayer(player);
+        }
+        return getPlayer();
+      }
+    } catch (err) {
+      console.warn('Failed to load player from Firebase:', err);
+    }
+    return null;
+  }
+
   return {
+    // Core exports
     ACHIEVEMENTS, RARITY_ORDER, RARITY_META, CARD_DB, CARD_BY_ID,
-    hasPlayer, getPlayer, savePlayer, createPlayer, renamePlayer,
-    addXp, addCoin, spendCoin, markGamePlayed, xpForLevel, levelFromXp,
-    unlockAchievement, getAchievementMeta,
-    pullCard, grantCard, collectionStats,
     UPGRADE_META, upgradeCost, buyUpgrade,
+
+    // Player management
+    hasPlayer, getPlayer, savePlayer, createPlayer, renamePlayer,
+    loadFromFirebase,
+
+    // Firebase account functions
+    firebaseCreateAccount, firebaseLogin,
+    setFirebaseDB, getFirebaseDB,
+
+    // XP/Coin/Level
+    addXp, addCoin, spendCoin, markGamePlayed, xpForLevel, levelFromXp,
+
+    // Stats
+    updateStat,
+
+    // Achievements
+    unlockAchievement, getAchievementMeta,
+
+    // Gacha
+    pullCard, grantCard, collectionStats,
+
+    // Daily
     canClaimDaily, claimDaily,
+
+    // Leaderboard
     ArcadeDB,
   };
 })();
+
+// Make ArcadeCore globally available
+window.ArcadeCore = ArcadeCore;

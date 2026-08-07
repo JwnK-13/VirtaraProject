@@ -3,27 +3,14 @@
    -------------------------------------------------------------------------
    Semua interaksi Firestore terpusat di sini. File ini adalah ES module
    (dimuat dengan <script type="module">), lalu mengekspos hasilnya sebagai
-   window.FirebaseDB supaya arcade-core.js (script biasa, bukan module)
-   bisa memakainya tanpa perlu ikut jadi module.
-
-   STRUKTUR FIRESTORE
-   -------------------------------------------------------------------------
-   players/{uuid}          -> profil & progres pemain (dokumen utama)
-   usernames/{usernameKey}  -> { uuid, username } - index unik untuk login
-                               & pengecekan username, usernameKey = lowercase
-   authcodes/{uuid}         -> { codeHash } - HASH SHA-256 dari Unique Code,
-                               dipisah dari players/ supaya kode asli tidak
-                               pernah tersimpan sebagai teks biasa
-   leaderboard_<game>/{uuid} -> entri skor terbaik per pemain per game
-
-   uuid dipakai sebagai document ID utama (BUKAN username) sesuai spek.
+   window.FirebaseDB dan window.__firebaseDBReady.
    ========================================================================= */
 
 import { db } from './firebase-config.js';
 import {
   doc, getDoc, setDoc, updateDoc, deleteDoc,
   collection, query, orderBy, limit, getDocs,
-  runTransaction,
+  runTransaction, serverTimestamp,
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
 function usernameKey(username) {
@@ -37,7 +24,6 @@ async function sha256Hex(text) {
 }
 
 function randomUniqueCode() {
-  // No ambiguous chars (0/O, 1/I) to keep codes easy to copy correctly.
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   const seg = n => Array.from({ length: n }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
   return `VP-${seg(4)}-${seg(4)}`;
@@ -124,7 +110,9 @@ async function loadPlayer(uuid) {
 }
 
 async function savePlayer(uuid, data) {
-  await setDoc(doc(db, 'players', uuid), data, { merge: false });
+  // Remove undefined values and ensure dates are strings
+  const cleanData = JSON.parse(JSON.stringify(data));
+  await setDoc(doc(db, 'players', uuid), cleanData, { merge: true });
 }
 
 async function submitScore(gameId, entry) {
@@ -136,15 +124,38 @@ async function submitScore(gameId, entry) {
 }
 
 async function getLeaderboard(gameId, top = 100) {
-  const q = query(collection(db, 'leaderboard_' + gameId), orderBy('score', 'desc'), limit(top));
-  const snap = await getDocs(q);
-  return snap.docs.map(d => d.data());
+  try {
+    const q = query(collection(db, 'leaderboard_' + gameId), orderBy('score', 'desc'), limit(top));
+    const snap = await getDocs(q);
+    return snap.docs.map(d => d.data());
+  } catch (err) {
+    console.warn('Leaderboard query error (may need index):', err);
+    // Fallback: get all and sort manually (slower, but works without index)
+    const q = query(collection(db, 'leaderboard_' + gameId));
+    const snap = await getDocs(q);
+    const results = snap.docs.map(d => d.data());
+    results.sort((a, b) => b.score - a.score);
+    return results.slice(0, top);
+  }
 }
 
-window.FirebaseDB = {
+// Export to window for ArcadeCore to use
+const FirebaseDB = {
   defaultPlayerDoc, createAccount, login, renameUsername,
   loadPlayer, savePlayer, submitScore, getLeaderboard,
 };
 
+window.FirebaseDB = FirebaseDB;
+window.__firebaseDBReady = true;
+
+// Notify ArcadeCore that FirebaseDB is ready
+if (window.ArcadeCore && window.ArcadeCore.setFirebaseDB) {
+  window.ArcadeCore.setFirebaseDB(FirebaseDB);
+  console.log('✅ FirebaseDB connected to ArcadeCore');
+}
+
 // Signal readiness to classic (non-module) scripts loaded after this one.
-if (window.__resolveFirebaseReady) window.__resolveFirebaseReady();
+if (window.__resolveFirebaseReady) {
+  window.__resolveFirebaseReady();
+}
+console.log('🔥 FirebaseDB initialized and ready');

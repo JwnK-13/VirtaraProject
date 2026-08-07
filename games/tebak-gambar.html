@@ -106,27 +106,34 @@
   }
 
   function finishRound(correct, points) {
-    ArcadeCore.markGamePlayed('tebak-gambar');
-    document.getElementById('gameArea').classList.add('hidden');
-    document.getElementById('resultArea').classList.remove('hidden');
-    document.getElementById('guessImage').style.filter = 'blur(0px)';
-    document.getElementById('resultTitle').textContent = correct ? `Benar! +${points} Poin` : 'Kehabisan Percobaan';
-    document.getElementById('resultDesc').textContent = `Jawabannya adalah ${target.name}. Total skor sesi ini: ${totalScore} poin.`;
+  ArcadeCore.markGamePlayed('tebak-gambar');
+  document.getElementById('gameArea').classList.add('hidden');
+  document.getElementById('resultArea').classList.remove('hidden');
+  document.getElementById('guessImage').style.filter = 'blur(0px)';
+  document.getElementById('resultTitle').textContent = correct ? `Benar! +${points} Poin` : 'Kehabisan Percobaan';
+  document.getElementById('resultDesc').textContent = `Jawabannya adalah ${target.name}. Total skor sesi ini: ${totalScore} poin.`;
 
-    if (correct) {
-      ArcadeCore.addXp(points * 2);
-      ArcadeCore.addCoin(points);
-      if (attempt === 0) ArcadeShell.unlockWithToast('guess_master');
-    }
-
-    ArcadeCore.updateStat('tebakGambar', {
-      lastScore: totalScore, lastCorrect: correct,
-      playCount: ((ArcadeCore.getPlayer().stats?.tebakGambar?.playCount) || 0) + 1,
-    });
-    const p = ArcadeCore.getPlayer();
-    ArcadeCore.ArcadeDB.submitScore('tebak-gambar', { uuid: p.uuid, username: p.username, score: totalScore });
-    ArcadeShell.renderNav('tebak-gambar.html');
+  if (correct) {
+    ArcadeCore.addXp(points * 2);
+    ArcadeCore.addCoin(points);
+    if (attempt === 0) ArcadeShell.unlockWithToast('guess_master');
   }
+
+  // Use new updateStat function
+  ArcadeCore.updateStat('tebakGambar', {
+    lastScore: totalScore, 
+    lastCorrect: correct,
+    playCount: ((ArcadeCore.getPlayer()?.stats?.tebakGambar?.playCount) || 0) + 1,
+  });
+  
+  const p = ArcadeCore.getPlayer();
+  ArcadeCore.ArcadeDB.submitScore('tebak-gambar', { 
+    uuid: p.uuid, 
+    username: p.username, 
+    score: totalScore 
+  });
+  ArcadeShell.renderNav('tebak-gambar.html');
+}
 
   document.getElementById('nextRoundBtn').addEventListener('click', newRound);
 
